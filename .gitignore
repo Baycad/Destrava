@@ -47,3 +47,6 @@ example
 
 # Impeccable: gerado a partir do DESIGN.md
 .impeccable/design.json
+
+# Impeccable: historico interno de criticas
+.impeccable/critique/
