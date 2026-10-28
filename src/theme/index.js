@@ -64,6 +64,13 @@ export const radius = {
 // Área mínima de toque recomendada (48 dp no Android, 44 pt no iOS).
 export const minTouchTarget = 48;
 
+// Limite de ampliação do rótulo das abas. Exceção à regra "fonte sem limite":
+// a barra de abas tem altura fixa, e com a fonte do sistema muito grande o rótulo
+// era cortado embaixo (teste de fonte ampliada, 28/10/2026). O conteúdo das telas
+// continua crescendo sem limite.
+export const tabLabelMaxFontScale = 1.2;
+export const tabBarHeight = 56;
+
 // Resposta visual ao toque, igual para todos os elementos tocáveis
 // (botões e links de seção): fica um pouco transparente e encolhe levemente.
 export const pressedFeedback = {
