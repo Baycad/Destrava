@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { colors, spacing } from '../theme';
+import { colors, minTouchTarget, pressedFeedback, spacing } from '../theme';
 import { AppText } from './AppText';
 
 /** Título de seção com ação opcional à direita (ex.: "Ver todas"). */
@@ -17,7 +17,7 @@ export function SectionHeader({ title, actionLabel, onAction, actionHint }) {
           accessibilityLabel={actionLabel}
           accessibilityHint={actionHint}
           hitSlop={8}
-          style={({ pressed }) => [styles.action, pressed ? styles.pressed : null]}>
+          style={({ pressed }) => [styles.action, pressed ? pressedFeedback : null]}>
           <AppText variant="label" color={colors.primary}>
             {actionLabel}
           </AppText>
@@ -39,11 +39,8 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   action: {
-    minHeight: 44,
+    minHeight: minTouchTarget,
     justifyContent: 'center',
     paddingHorizontal: spacing.xs,
-  },
-  pressed: {
-    opacity: 0.6,
   },
 });

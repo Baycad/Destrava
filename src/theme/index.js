@@ -11,6 +11,7 @@
 //   onHeroSecondary / hero ........  9,11:1
 //   onHeroAction / heroAction .....  8,36:1
 //   demoText / demoBackground .....  7,02:1
+//   textSecondary / surfaceMuted ..  6,24:1
 //   borderStrong / background .....  3,46:1 (elemento gráfico, mínimo 3:1)
 
 export const colors = {
@@ -63,17 +64,27 @@ export const radius = {
 // Área mínima de toque recomendada (48 dp no Android, 44 pt no iOS).
 export const minTouchTarget = 48;
 
+// Resposta visual ao toque, igual para todos os elementos tocáveis
+// (botões e links de seção): fica um pouco transparente e encolhe levemente.
+export const pressedFeedback = {
+  opacity: 0.8,
+  transform: [{ scale: 0.98 }],
+};
+
 // Usamos a fonte do sistema (Roboto no Android, SF no iOS): é legível,
 // respeita o tamanho de fonte escolhido pelo usuário e não exige biblioteca extra.
+//
+// Hierarquia da tela Hoje (Etapa 1.1): o passo em destaque usa "display",
+// o maior estilo do app; a saudação usa "title"; a pergunta central usa "heading".
 export const typography = {
   display: { fontSize: 28, lineHeight: 34, fontWeight: '700' },
   title: { fontSize: 24, lineHeight: 30, fontWeight: '700' },
-  hero: { fontSize: 24, lineHeight: 31, fontWeight: '700' },
   heading: { fontSize: 18, lineHeight: 24, fontWeight: '600' },
   body: { fontSize: 16, lineHeight: 24, fontWeight: '400' },
-  bodyStrong: { fontSize: 16, lineHeight: 22, fontWeight: '600' },
+  bodyStrong: { fontSize: 16, lineHeight: 24, fontWeight: '600' },
   caption: { fontSize: 14, lineHeight: 20, fontWeight: '400' },
   label: { fontSize: 14, lineHeight: 20, fontWeight: '600' },
   button: { fontSize: 16, lineHeight: 20, fontWeight: '600' },
   stat: { fontSize: 28, lineHeight: 32, fontWeight: '700', fontVariant: ['tabular-nums'] },
+  tabLabel: { fontSize: 12, lineHeight: 16, fontWeight: '600' },
 };

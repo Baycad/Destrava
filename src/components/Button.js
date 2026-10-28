@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet } from 'react-native';
 
-import { colors, minTouchTarget, radius, spacing } from '../theme';
+import { colors, minTouchTarget, pressedFeedback, radius, spacing } from '../theme';
 import { AppText } from './AppText';
 import { Icon } from './Icon';
 
@@ -47,7 +47,7 @@ export function Button({
       style={({ pressed }) => [
         styles.base,
         current.container,
-        pressed && !disabled ? styles.pressed : null,
+        pressed && !disabled ? pressedFeedback : null,
         disabled ? styles.disabled : null,
         style,
       ]}>
@@ -73,10 +73,6 @@ const styles = StyleSheet.create({
   label: {
     flexShrink: 1,
     textAlign: 'center',
-  },
-  pressed: {
-    opacity: 0.85,
-    transform: [{ scale: 0.98 }],
   },
   disabled: {
     opacity: 0.5,

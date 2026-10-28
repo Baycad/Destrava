@@ -7,10 +7,12 @@ import { countSteps, getFirstPendingStep } from './selectors';
 
 /**
  * Linha de tarefa: título, próximo passo e quantos passos já foram feitos.
- * Nesta etapa ela é apenas informativa (sem toque); concluir e abrir
+ * - isHighlighted: true quando o próximo passo desta tarefa já aparece no card
+ *   "Seu próximo passo". Nesse caso a linha não repete o passo, só aponta para o card.
+ * Nesta etapa a linha é apenas informativa (sem toque); concluir e abrir
  * a tarefa serão implementados na Etapa 2.
  */
-export function TaskItem({ task, showDivider = false }) {
+export function TaskItem({ task, showDivider = false, isHighlighted = false }) {
   const { done: stepsDone, total } = countSteps(task);
   const nextStep = getFirstPendingStep(task);
   const isDone = task.status === 'done';
@@ -24,16 +26,15 @@ export function TaskItem({ task, showDivider = false }) {
     summary = `${stepsDone} de ${total} passos feitos`;
   }
 
-  const showNextStep = !isDone && nextStep !== null;
+  const hasNextStep = !isDone && nextStep !== null;
+  const nextStepText = hasNextStep
+    ? isHighlighted
+      ? 'Próximo passo em destaque no card acima'
+      : `Próximo: ${nextStep.title}`
+    : null;
 
   // Frase única lida pelo TalkBack/VoiceOver ao focar a linha.
-  const accessibilityLabel = [
-    task.title,
-    summary,
-    showNextStep ? `Próximo passo: ${nextStep.title}` : null,
-  ]
-    .filter(Boolean)
-    .join('. ');
+  const accessibilityLabel = [task.title, summary, nextStepText].filter(Boolean).join('. ');
 
   return (
     <View
@@ -49,7 +50,11 @@ export function TaskItem({ task, showDivider = false }) {
         <AppText variant="bodyStrong" color={isDone ? colors.textSecondary : colors.text}>
           {task.title}
         </AppText>
-        {showNextStep ? <AppText variant="caption">Próximo: {nextStep.title}</AppText> : null}
+        {nextStepText ? (
+          <AppText variant="caption" color={isHighlighted ? colors.textSecondary : colors.text}>
+            {nextStepText}
+          </AppText>
+        ) : null}
         <AppText variant="caption" color={colors.textSecondary}>
           {summary}
         </AppText>
@@ -71,6 +76,6 @@ const styles = StyleSheet.create({
   },
   texts: {
     flex: 1,
-    gap: 2,
+    gap: spacing.xs,
   },
 });

@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 
 import { Icon } from '../../components/Icon';
-import { colors } from '../../theme';
+import { colors, typography } from '../../theme';
 
 /**
  * Navegação inferior com três abas.
@@ -14,16 +14,16 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
+        // Transição suave (cross-fade) ao trocar de aba.
+        // Não cria espera: a tela nova já está pronta e só aparece com um fade curto.
+        animation: 'fade',
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
         },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
-        },
+        tabBarLabelStyle: typography.tabLabel,
       }}>
       <Tabs.Screen
         name="index"

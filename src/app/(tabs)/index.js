@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet } from 'react-native';
 
 import { AppText } from '../../components/AppText';
 import { Button } from '../../components/Button';
@@ -9,14 +9,18 @@ import { EmptyState } from '../../components/EmptyState';
 import { Screen } from '../../components/Screen';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { SectionHeader } from '../../components/SectionHeader';
-import { StatTile } from '../../components/StatTile';
 import { SHOW_DEMO_DATA, getTasks, getWeekSummary } from '../../data/demo';
 import { TaskList } from '../../features/tasks/TaskList';
 import { getNextStep, getTodayTasks } from '../../features/tasks/selectors';
 import { colors, spacing } from '../../theme';
 import { formatLongDate, getGreeting } from '../../utils/date';
+import { pluralize } from '../../utils/format';
 
-/** Aba "Hoje": a tela inicial do Destrava. */
+/**
+ * Aba "Hoje": a tela inicial do Destrava.
+ * Hierarquia (Etapa 1.1): o passo dentro do card é o maior texto da tela;
+ * a pergunta central fica acima do card, em tamanho menor.
+ */
 export default function TodayScreen() {
   const router = useRouter();
   const now = new Date();
@@ -27,7 +31,7 @@ export default function TodayScreen() {
   const summary = getWeekSummary();
 
   function handleStartFocus() {
-    // O temporizador de foco será construído na Etapa 4.
+    // O temporizador de foco será construído numa próxima etapa.
     Alert.alert(
       'Modo foco em construção',
       'Nesta etapa, o botão é apenas visual. O temporizador de foco chega numa próxima etapa.'
@@ -49,18 +53,18 @@ export default function TodayScreen() {
 
       {SHOW_DEMO_DATA ? <DemoBadge /> : null}
 
-      {/* 2. Pergunta central do app */}
-      <AppText variant="display">Qual é a menor coisa que você pode começar agora?</AppText>
+      {/* 2. Pergunta central: voz do produto, abaixo do passo na hierarquia */}
+      <AppText variant="heading">Qual é a menor coisa que você pode começar agora?</AppText>
 
       {/* 3 e 4. Card de destaque com o botão principal */}
-      <Card variant="hero" style={styles.heroCard}>
-        <AppText variant="label" color={colors.onHeroSecondary}>
+      <Card variant="hero">
+        <AppText variant="label" color={colors.onHeroSecondary} accessibilityRole="header">
           Seu próximo passo
         </AppText>
 
         {nextStep ? (
           <>
-            <AppText variant="hero" color={colors.onHero}>
+            <AppText variant="display" color={colors.onHero}>
               {nextStep.step.title}
             </AppText>
             <AppText variant="caption" color={colors.onHeroSecondary}>
@@ -71,7 +75,7 @@ export default function TodayScreen() {
               icon="play"
               variant="hero"
               onPress={handleStartFocus}
-              accessibilityHint="Abre uma sessão curta de foco para este passo"
+              accessibilityHint="Em construção: por enquanto, mostra um aviso"
               style={styles.heroButton}
             />
             <AppText variant="caption" color={colors.onHeroSecondary}>
@@ -80,7 +84,7 @@ export default function TodayScreen() {
           </>
         ) : (
           <>
-            <AppText variant="hero" color={colors.onHero}>
+            <AppText variant="display" color={colors.onHero}>
               {tasks.length === 0 ? 'Nenhum passo por aqui ainda' : 'Defina um primeiro passo'}
             </AppText>
             <AppText variant="body" color={colors.onHeroSecondary}>
@@ -93,13 +97,14 @@ export default function TodayScreen() {
               icon={tasks.length === 0 ? 'add' : 'tasks'}
               variant="hero"
               onPress={goToTasks}
+              accessibilityHint="Abre a aba Tarefas"
               style={styles.heroButton}
             />
           </>
         )}
       </Card>
 
-      {/* 5. Tarefas do dia */}
+      {/* 5. Tarefas do dia (sem repetir o passo que já está no card) */}
       <SectionHeader
         title="Tarefas de hoje"
         actionLabel="Ver todas"
@@ -107,7 +112,7 @@ export default function TodayScreen() {
         onAction={goToTasks}
       />
       {todayTasks.length > 0 ? (
-        <TaskList tasks={todayTasks} />
+        <TaskList tasks={todayTasks} highlightedTaskId={nextStep ? nextStep.task.id : null} />
       ) : (
         <EmptyState
           icon="leaf"
@@ -116,7 +121,7 @@ export default function TodayScreen() {
         />
       )}
 
-      {/* 6. Resumo simples do progresso */}
+      {/* 6. Resumo simples do progresso: uma frase; os números completos ficam na aba Progresso */}
       <SectionHeader
         title="Sua semana"
         actionLabel="Ver progresso"
@@ -125,11 +130,17 @@ export default function TodayScreen() {
       />
       {summary ? (
         <Card>
-          <View style={styles.statsRow}>
-            <StatTile value={summary.sessions} label="sessões de foco" />
-            <StatTile value={summary.focusMinutes} label="minutos focados" />
-            <StatTile value={summary.stepsDone} label="passos feitos" />
-          </View>
+          <AppText variant="body">
+            Nesta semana:{' '}
+            <AppText variant="bodyStrong" color={colors.primary}>
+              {pluralize(summary.sessions, 'sessão de foco', 'sessões de foco')}
+            </AppText>{' '}
+            e{' '}
+            <AppText variant="bodyStrong" color={colors.primary}>
+              {pluralize(summary.stepsDone, 'passo feito', 'passos feitos')}
+            </AppText>
+            .
+          </AppText>
           <AppText variant="caption" color={colors.textSecondary}>
             Cada começo conta, inclusive os pequenos.
           </AppText>
@@ -146,17 +157,8 @@ export default function TodayScreen() {
 }
 
 const styles = StyleSheet.create({
-  heroCard: {
-    padding: spacing.xl,
-    gap: spacing.md,
-  },
   heroButton: {
     alignSelf: 'flex-start',
     marginTop: spacing.sm,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.lg,
   },
 });
