@@ -3,7 +3,7 @@
 Atualize este arquivo ao final de cada etapa. Uma funcionalidade só é marcada como
 **testada** depois de executada de fato em um aparelho ou emulador.
 
-Última atualização: 28/10/2026 (Etapa 1.1)
+Última atualização: 28/10/2026 (Etapa 1.1 concluída)
 
 ## Ambiente
 
@@ -24,6 +24,11 @@ Atualize este arquivo ao final de cada etapa. Uma funcionalidade só é marcada 
 | (hash a registrar) | docs: registro atualizado e configuracao do Impeccable |
 | `13b69f4` | docs: adiciona PRODUCT.md com o contexto do produto |
 | (hash a registrar) | docs: adiciona DESIGN.md com o sistema visual |
+| (hash a registrar) | docs: avaliacao heuristica da tela Hoje |
+| (hash a registrar) | feat: etapa 1.1 - hierarquia da tela Hoje e consistencia do sistema visual |
+| (hash a registrar) | fix: rotulos das abas cortados com fonte ampliada |
+
+Para preencher os hashes: `git --no-pager log --oneline`.
 
 ## Etapa 1 — Estrutura e interface visual
 
@@ -41,7 +46,7 @@ Status: **implementada e testada no aparelho, com 2 testes de acessibilidade pen
 | Links "Ver todas" e "Ver progresso" | Testado ✅ | Relato do desenvolvedor |
 | Estados vazios (`SHOW_DEMO_DATA = false`): aviso some, contornos tracejados aparecem | Testado ✅ | Relato do desenvolvedor |
 | Botão "Criar minha primeira tarefa" (estado vazio) leva à aba Tarefas | Não confirmado | — |
-| Fonte do sistema no tamanho máximo, sem texto cortado | Pendente | — |
+| Fonte do sistema no tamanho máximo, sem texto cortado | Testado na Etapa 1.1 (ver abaixo) | Vídeo 17:23 e prints 17:35–17:40 |
 | Leitura com TalkBack | Pendente | — |
 | Transição em fade entre abas (`animation: 'fade'`) | Não aplicada na Etapa 1; incluída na Etapa 1.1 | — |
 
@@ -181,7 +186,7 @@ usuários e não deve ser apresentada como resultado de pesquisa com pessoas.
 
 ## Etapa 1.1 — Ajustes de consistência e hierarquia
 
-Status: **implementada, aguardando teste no aparelho**
+Status: **concluída e testada no aparelho**, com o teste de TalkBack adiado
 
 Origem: problemas da crítica da tela Hoje + inconsistências listadas no `DESIGN.md`.
 
@@ -204,6 +209,7 @@ Origem: problemas da crítica da tela Hoje + inconsistências listadas no `DESIG
 | `gap` do TaskItem dentro da escala (`xs`) | DESIGN.md nº 3 | `src/features/tasks/TaskItem.js` |
 | Transição em fade entre abas | DESIGN.md nº 13 / pedido de UX | `src/app/(tabs)/_layout.js` |
 | `userInterfaceStyle: "light"` enquanto só existe tema claro | DESIGN.md nº 11 | `app.json` |
+| Rótulo das abas com ampliação limitada a 1,2 (`tabLabelMaxFontScale`) e área das abas com 56 dp (`tabBarHeight`) mais o espaço da barra do sistema | Defeito encontrado no teste de fonte máxima | `src/theme/index.js`, `src/app/(tabs)/_layout.js` |
 | Tabela de contraste do registro completa e com nomes de token | DESIGN.md nº 14 | `docs/registro-do-projeto.md` |
 
 ### Adiado (com motivo)
@@ -224,23 +230,43 @@ Origem: problemas da crítica da tela Hoje + inconsistências listadas no `DESIG
 
 ### Testes
 
-| Item | Status |
-|---|---|
-| Hierarquia: passo do card maior que a pergunta e que a saudação | Pendente |
-| Lista "Tarefas de hoje" sem repetir o passo do card | Pendente |
-| "Sua semana" em uma frase, com plural correto | Pendente |
-| Fade ao trocar de aba | Pendente |
-| Botões e "Ver todas"/"Ver progresso" com o mesmo feedback de toque | Pendente |
-| Aba Progresso sem mudança visual (StatTile reaproveitando o Card) | Pendente |
-| `Alert` claro com o aparelho em modo escuro (`userInterfaceStyle: "light"`) | Pendente (pode não ter efeito no Expo Go) |
-| TalkBack: rótulo "Seu próximo passo" como cabeçalho e dica honesta do botão | Pendente |
-| Fonte do sistema no tamanho máximo (pendente desde a Etapa 1) | Pendente |
+Aparelho: Android físico com Expo Go. Evidências: vídeo de 28/10 às 17:11 (navegação e
+telas), vídeo de 17:23 (fonte máxima) e prints de 17:35, 17:39 e 17:40 (rótulos das abas).
+
+| Item | Status | Observação |
+|---|---|---|
+| Hierarquia: passo do card maior que a pergunta e que a saudação | Testado ✅ | — |
+| Lista "Tarefas de hoje" sem repetir o passo do card | Testado ✅ | Na aba Tarefas, que não tem o card, o passo aparece normalmente, como esperado |
+| "Sua semana" em uma frase, com plural correto | Testado ✅ | "Nesta semana: 6 sessões de foco e 3 passos feitos." |
+| Fade ao trocar de aba | Testado ✅ | Quadros intermediários mostram a transição; `animation: 'fade'` funciona no SDK 58 |
+| Mesmo feedback de toque em botões e links | Testado ✅ | Relato do desenvolvedor e quadro do vídeo de 17:23 |
+| Aba Progresso sem mudança visual (StatTile reaproveitando o Card) | Testado ✅ | — |
+| `Alert` claro com o aparelho em modo escuro | Comportamento desejado observado | No Expo Go o aviso já aparecia claro com `"automatic"` (vídeo da Etapa 1), então o efeito da mudança só poderá ser confirmado numa versão instalada do app |
+| Fonte do sistema no máximo: telas Hoje, Tarefas e Progresso | Testado ✅ | Os textos quebram em mais linhas sem cortar; a grade da aba Progresso continua com duas colunas. O máximo deste aparelho equivale a cerca de 30% de ampliação; aparelhos que permitem mais não foram testados |
+| Fonte do sistema no máximo: rótulos das abas | Defeito encontrado e corrigido ✅ | Ver "Defeito: rótulos das abas cortados" |
+| TalkBack: rótulo "Seu próximo passo" como cabeçalho e dica honesta do botão | **Pendente (adiado)** | Deve ser feito antes da apresentação ao professor e do teste com usuários; previsto para junto da Etapa 2 |
+
+### Defeito: rótulos das abas cortados com fonte máxima
+
+- **Sintoma:** com a fonte do sistema no máximo, a parte de baixo dos rótulos das abas era
+  cortada ("Hoje" aparecia como "Hoie" e o "g" de "Progresso" sumia). Com a fonte normal
+  não acontecia (comparação com os vídeos da Etapa 1 e da Etapa 1.1).
+- **Causa:** a área das abas tem altura fixa; o texto cresce com a fonte do sistema, mas a
+  barra não acompanha.
+- **Primeira tentativa:** limitar a ampliação do rótulo a 1,2. Reduziu o tamanho, mas o
+  texto continuou cortado (print de 17:35).
+- **Correção final:** manter o limite de 1,2 e aumentar a área das abas para 56 dp, somando
+  o espaço da barra de navegação do sistema (`useSafeAreaInsets`). Rótulos inteiros com a
+  fonte no máximo (print de 17:39) e bem posicionados com a fonte normal (print de 17:40).
+- **Decisão de design:** o limite de ampliação do rótulo das abas é uma exceção consciente
+  à regra "fonte sem limite" do `DESIGN.md`, justificada pela altura fixa da barra. O
+  conteúdo das telas continua crescendo sem limite.
 
 ## Próximos passos
 
-1. Testar a Etapa 1.1 no aparelho, incluindo os testes de acessibilidade pendentes desde a
-   Etapa 1 (fonte máxima e TalkBack).
-2. Atualizar o `DESIGN.md` com as mudanças da Etapa 1.1 e marcar as inconsistências resolvidas.
-3. Rodar `/impeccable critique` de novo na tela Hoje e comparar com os 21/32.
-4. Etapa 2: tarefas reais (criar, editar, concluir, excluir) com persistência local
+1. Atualizar o `DESIGN.md` com as mudanças da Etapa 1.1, a exceção do rótulo das abas e as
+   inconsistências resolvidas.
+2. (Opcional) Rodar `/impeccable critique` de novo na tela Hoje e comparar com os 21/32.
+3. Etapa 2: tarefas reais (criar, editar, concluir, excluir) com persistência local
    (AsyncStorage), estados de carregamento reais e caixa de seleção de verdade nas tarefas.
+4. Teste com TalkBack (adiado da Etapa 1.1), junto com a Etapa 2.
