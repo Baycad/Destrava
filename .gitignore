@@ -44,3 +44,6 @@ example
 
 # Impeccable: configuracao local desta maquina
 .impeccable/config.local.json
+
+# Impeccable: gerado a partir do DESIGN.md
+.impeccable/design.json
