@@ -79,3 +79,7 @@ out/
 !.yarn/plugins
 !.yarn/releases
 !.yarn
+# Impeccable: arquivos locais e gerados (nao versionar)
+.impeccable/config.local.json
+.impeccable/design.json
+.impeccable/critique/
