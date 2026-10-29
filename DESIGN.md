@@ -16,8 +16,7 @@ colors:
   onHeroSecondary: "#CFE5DF"
   heroAction: "#9EE6C9"
   onHeroAction: "#0F3D3A"
-  demoBackground: "#FFF4CC"
-  demoText: "#6B4E00"
+  error: "#A8322B"
 typography:
   display:
     fontFamily: "Roboto, system-ui, sans-serif"
@@ -104,6 +103,32 @@ components:
     rounded: "{rounded.pill}"
     padding: "12px 24px"
     height: "48px"
+  button-danger:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.error}"
+    typography: "{typography.button}"
+    rounded: "{rounded.pill}"
+    padding: "12px 24px"
+    height: "48px"
+  text-field:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text}"
+    typography: "{typography.body}"
+    rounded: "{rounded.md}"
+    padding: "8px 12px"
+    height: "48px"
+  checkbox:
+    textColor: "{colors.textSecondary}"
+    size: "48px"
+  checkbox-checked:
+    textColor: "{colors.primary}"
+    size: "48px"
+  form-header:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text}"
+    typography: "{typography.heading}"
+    padding: "0 8px"
+    height: "48px"
   card-default:
     backgroundColor: "{colors.surface}"
     rounded: "{rounded.lg}"
@@ -118,12 +143,6 @@ components:
     typography: "{typography.display}"
     rounded: "{rounded.xl}"
     padding: "24px"
-  demo-badge:
-    backgroundColor: "{colors.demoBackground}"
-    textColor: "{colors.demoText}"
-    typography: "{typography.caption}"
-    rounded: "{rounded.md}"
-    padding: "12px"
   empty-state:
     textColor: "{colors.text}"
     rounded: "{rounded.lg}"
@@ -144,11 +163,11 @@ components:
   task-item:
     textColor: "{colors.text}"
     typography: "{typography.bodyStrong}"
-    padding: "16px"
+    padding: "8px 16px 8px 4px"
   task-item-done:
     textColor: "{colors.textSecondary}"
     typography: "{typography.bodyStrong}"
-    padding: "16px"
+    padding: "8px 16px 8px 4px"
   outcome-row:
     textColor: "{colors.text}"
     typography: "{typography.body}"
@@ -174,7 +193,7 @@ components:
 
 > Fonte da verdade: [src/theme/index.js](src/theme/index.js) (tokens) e
 > [src/components/](src/components/) (componentes). Este documento descreve o que existe
-> no código ao fim da Etapa 1.1. Se os dois divergirem, vale o código, e este arquivo deve
+> no código ao fim da Etapa 2. Se os dois divergirem, vale o código, e este arquivo deve
 > ser atualizado.
 >
 > Unidades: os valores em `px` do cabeçalho correspondem às unidades independentes de
@@ -216,7 +235,7 @@ produtividade agressiva e visual clínico/hospitalar (ver Do's and Don'ts).
 ## Colors
 
 Neutros frios e dessaturados sustentam uma única família verde-petróleo, que marca ação e
-destaque. O amarelo é reservado ao aviso de demonstração.
+destaque. O Vermelho-Tijolo aparece só em erros de validação e em ações que apagam algo.
 
 ### Primary
 - **Verde-Petróleo** (`primary`): a cor de ação. Fundo do botão principal, contorno e texto
@@ -237,8 +256,13 @@ destaque. O amarelo é reservado ao aviso de demonstração.
   valor de `hero`.
 
 ### Tertiary
-- **Amarelo-Aviso** (`demoBackground`) e **Ocre Escuro** (`demoText`): exclusivos do
-  aviso "Modo demonstração". Não são cor de alerta, erro ou destaque.
+- **Vermelho-Tijolo** (`error`): cor exclusiva de erro de validação e de ações que apagam
+  algo. Aparece no contorno e na mensagem de um campo de texto com erro e no contorno e no
+  texto do botão "Excluir tarefa" (variante Danger). É um vermelho sóbrio, sem tom de
+  alarme, e sempre vem acompanhado de texto: a cor nunca é a única pista.
+
+*Removido na Etapa 2:* o aviso de demonstração (`DemoBadge`) e os seus tokens
+`demoBackground` (Amarelo-Aviso) e `demoText` (Ocre Escuro).
 
 ### Neutral
 - **Névoa Fria** (`background`): fundo de todas as telas.
@@ -249,8 +273,10 @@ destaque. O amarelo é reservado ao aviso de demonstração.
 - **Borda Suave** (`border`): borda de 1 dp dos cards padrão, divisórias finas entre
   tarefas e linha superior da barra de abas. Decorativa: não é usada para delimitar
   controles.
-- **Cinza-Ardósia** (`borderStrong`): contorno tracejado dos estados vazios. É a única
-  borda com contraste de elemento gráfico (3:1).
+- **Cinza-Ardósia** (`borderStrong`): contorno tracejado dos estados vazios, contorno dos
+  campos de texto (quando não estão em foco nem com erro) e trilho desligado da chave
+  "Para hoje". É a única borda com contraste de elemento gráfico (3:1), por isso é a que
+  delimita controles.
 - **Tinta** (`text`): texto principal.
 - **Ardósia** (`textSecondary`): subtítulos, legendas, resumo das tarefas, aviso "Próximo
   passo em destaque no card acima", aba inativa, ícone de tarefa pendente e título de
@@ -270,9 +296,11 @@ texto comum e 3:1 para elemento gráfico):
 | `onHero` / `hero` | 12,01:1 |
 | `onHeroSecondary` / `hero` | 9,11:1 |
 | `onHeroAction` / `heroAction` | 8,36:1 |
-| `demoText` / `demoBackground` | 7,02:1 |
 | `textSecondary` / `surfaceMuted` | 6,24:1 |
 | `borderStrong` / `background` | 3,46:1 (elemento gráfico) |
+| `borderStrong` / `surface` | 3,75:1 (contorno de campo de texto) |
+| `error` / `background` | 6,14:1 |
+| `error` / `surface` | 6,65:1 |
 
 Pares que aparecem na interface mas não estão no comentário, calculados durante a
 documentação (fórmula WCAG 2.1, 28/10/2026):
@@ -293,8 +321,12 @@ passo". Nenhum outro bloco escuro, banner ou destaque compete com ele.
 **The One Action Color Rule.** Toda ação e todo destaque interativo usa o Verde-Petróleo.
 A Menta Clara é a mesma ação, só que dentro do card escuro.
 
-**The Yellow Means Demo Rule.** O amarelo existe só para avisar que os dados são de
-demonstração. Ele sai junto com o aviso, na Etapa 2.
+**The Red Means Error Rule.** O Vermelho-Tijolo marca só erro de validação e ações que
+apagam algo, sempre junto de um texto que explica o que aconteceu ou o que vai acontecer.
+Não é cor de urgência, prazo nem destaque.
+
+*Histórico:* a regra "The Yellow Means Demo Rule" saiu na Etapa 2, junto com o aviso de
+demonstração e os tokens dele.
 
 ## Typography
 
@@ -388,15 +420,17 @@ se cria uma resposta de toque própria num componente.
 
 As formas são suaves em toda parte, e o raio cresce com a importância do elemento:
 
-- **Arredondado médio** (12 dp, `md`): aviso de demonstração.
+- **Arredondado médio** (12 dp, `md`): campos de texto (`TextField`). Até a Etapa 1.1 era
+  usado no aviso de demonstração, removido na Etapa 2.
 - **Arredondado largo** (20 dp, `lg`): cards padrão e discretos, listas, StatTile em caixa e
   estados vazios.
 - **Arredondado generoso** (28 dp, `xl`): somente o card de destaque.
 - **Pílula** (999, `pill`): todos os botões.
 
 Bordas: 1 dp sólida para cards (e, por consequência, para o StatTile em caixa), 1,5 dp para
-o botão secundário e o contorno dos estados vazios, e linha fina do sistema
-(`hairlineWidth`) entre tarefas. Os cards cortam o conteúdo nos cantos (`overflow:
+os botões Secondary e Danger, o contorno dos campos de texto e o contorno dos estados
+vazios, e linha fina do sistema (`hairlineWidth`) entre tarefas e embaixo do cabeçalho do
+formulário. Os cards cortam o conteúdo nos cantos (`overflow:
 hidden`), para que as divisórias das listas respeitem o raio.
 
 ### Named Rules
@@ -418,9 +452,14 @@ o leitor de tela.
   "Nova tarefa" e nas ações de estado vazio.
 - **Hero:** fundo Menta Clara, texto Petróleo Profundo. Só existe dentro do card de
   destaque, alinhado à esquerda.
+- **Danger:** fundo branco, contorno de 1,5 dp e texto em Vermelho-Tijolo (`error`). É usada
+  só em "Excluir tarefa", no formulário de edição, sempre com confirmação antes de apagar.
 - **Pressed:** `pressedFeedback` (opacidade 0,8 e escala 0,98). **Disabled:** opacidade
   0,5, com `accessibilityState.disabled`.
-- Não há variante de texto puro nem de perigo/erro.
+- **Acessibilidade:** papel de botão, rótulo igual ao texto e dica opcional
+  (`accessibilityHint`). O ícone fica oculto.
+- O `Button` não tem variante de texto puro. Os botões de texto "Cancelar" e "Salvar" são
+  locais do formulário de tarefa (ver Formulário de tarefa).
 
 ### Cards / Containers (`Card`)
 - **Padding por variante:** 16 dp em `default` e `muted`, 24 dp em `hero`, sempre com
@@ -437,6 +476,24 @@ o leitor de tela.
   (Caption), o botão Hero e a frase de permissão (Caption).
 - **Shadow Strategy:** nenhuma (ver Elevation & Depth).
 
+### Card de destaque da tela Hoje ("Seu próximo passo")
+Com um passo em aberto, o card mostra o passo (Display), "Passo X de Y em [tarefa]"
+(Caption), o botão Hero "Começar 5 minutos" e a frase "Cinco minutos já valem. Se quiser
+parar depois, tudo bem." O botão ainda só mostra um aviso, porque o temporizador chega numa
+etapa futura. A dica falada é "Em construção: por enquanto, mostra um aviso".
+
+Sem passo para mostrar, o card continua no lugar, com o rótulo "Seu próximo passo", e muda
+título (Display), mensagem (Body Menta Esmaecida) e botão Hero conforme a situação
+(`getEmptyHeroContent`, em `src/app/(tabs)/index.js`):
+
+| Situação | Título | Mensagem | Botão | Ação |
+|---|---|---|---|---|
+| Nenhuma tarefa | "Nenhum passo por aqui ainda" | "Anote algo que você vem adiando. Depois, a gente divide em partes pequenas." | "Criar minha primeira tarefa" (ícone `add`) | Abre o formulário de nova tarefa |
+| Todas concluídas | "Nada pendente por agora" | "Quando surgir algo novo, é só anotar aqui." | "Nova tarefa" (ícone `add`) | Abre o formulário de nova tarefa |
+| Pendentes sem passo em aberto | "Defina um primeiro passo" | "Escolha uma tarefa e escreva uma ação que caiba em poucos minutos." | "Ver minhas tarefas" (ícone `tasks`) | Abre a aba Tarefas |
+
+O tom de "todas concluídas" é de reconhecimento discreto, sem comemoração nem cobrança.
+
 ### Lista de tarefas (`TaskList`, em `src/features/tasks/TaskList.js`)
 Um painel único que agrupa as tarefas, em vez de um card por tarefa.
 - Card padrão com `padded={false}`: fundo branco, borda suave de 1 dp, raio de 20 dp. Quem
@@ -446,31 +503,122 @@ Um painel único que agrupa as tarefas, em vez de um card por tarefa.
 - O corte nos cantos (`overflow: hidden`) faz as divisórias respeitarem o raio.
 - `highlightedTaskId`: identifica a tarefa cujo próximo passo já está no card de destaque.
   A linha dessa tarefa não repete o passo. A tela Hoje usa essa propriedade.
+- **Interação:** a caixa de seleção de cada linha conclui ou reabre a tarefa e anuncia
+  "Tarefa concluída." ou "Tarefa reaberta." para o leitor de tela. Tocar no resto da linha
+  abre o formulário de edição (`/tarefa/formulario?id=…`).
 - Aparece na tela Hoje ("Tarefas de hoje") e na tela Tarefas ("Pendentes" e "Concluídas").
 
 ### Linha de tarefa (`TaskItem`, em `src/features/tasks/TaskItem.js`)
 Mostra uma tarefa e, logo abaixo, o passo que vem a seguir.
-- **Estrutura:** linha horizontal alinhada ao topo, com padding de 16 dp, ícone de 24 dp e,
-  a 12 dp do ícone, uma coluna de texto que ocupa o resto da largura. As linhas de texto
-  ficam a 4 dp uma da outra (`xs`).
+- **Estrutura:** linha horizontal alinhada ao topo, com padding de 8 dp em cima e embaixo,
+  4 dp à esquerda e 16 dp à direita. À esquerda fica a caixa de seleção (`Checkbox`, 48 ×
+  48 dp, com ícone de 24 dp). A área de texto ocupa o resto da largura, com padding de 8 dp
+  em cima e embaixo e 4 dp à esquerda. As linhas de texto ficam a 4 dp uma da outra (`xs`),
+  e a área tem pelo menos 64 dp de altura.
 - **Divisória:** linha fina do sistema (`hairlineWidth`) em Borda Suave, no topo, quando
   `showDivider` está ativo.
-- **Pendente:** ícone de círculo vazio em Ardósia e título em Body Strong Tinta. Se houver
+- **Pendente:** caixa com ícone de círculo vazio em Ardósia e título em Body Strong Tinta. Se houver
   passo em aberto, aparece "Próximo: [passo]" em Caption Tinta. Por último vem o resumo:
   "X de Y passos feitos", ou "Ainda sem passos definidos" quando a tarefa não tem passos,
   em Caption Ardósia.
 - **Em destaque (`isHighlighted`):** quando o próximo passo da tarefa já está no card de
   destaque, a linha "Próximo" é trocada por "Próximo passo em destaque no card acima", em
   Caption Ardósia.
-- **Concluída:** ícone de círculo marcado em Verde-Petróleo, título em Body Strong
+- **Concluída:** caixa com ícone de círculo marcado em Verde-Petróleo, título em Body Strong
   Ardósia, sem a linha "Próximo", e o resumo "Concluída".
 - **Hierarquia:** "Próximo: [passo]" é o único Caption em Tinta do sistema, para que o
   passo seguinte se destaque do resumo, que fica em Ardósia. O aviso de destaque fica em
   Ardósia porque só aponta para o card, sem repetir o passo.
-- **Acessibilidade:** a linha é um único elemento para o leitor de tela, que lê título,
-  resumo e a linha do próximo passo (ou o aviso de destaque) numa frase só, separados por
-  ponto.
-- **Interação:** nenhuma nesta etapa. Abrir e concluir a tarefa ficam para a Etapa 2.
+- **Interação:** duas áreas de toque. A caixa de seleção conclui ou reabre a tarefa. O resto
+  da linha é um `Pressable`, com `pressedFeedback`, que abre a edição.
+- **Acessibilidade:** são dois elementos para o leitor de tela:
+  - a caixa: rótulo igual ao título da tarefa, papel de caixa de seleção, estado marcada ou
+    não marcada e dica "Marca a tarefa como concluída" ou "Reabre a tarefa";
+  - a área de texto: papel de botão, dica "Abre a edição da tarefa" e uma frase única na
+    mesma ordem em que os textos aparecem na tela: "título. próximo passo. resumo". A parte
+    do próximo passo é "Próximo: [passo]", o aviso de destaque ou nada, se a tarefa não tem
+    passo em aberto.
+
+### Caixa de seleção (`Checkbox`)
+- **Estrutura:** área de toque de 48 × 48 dp (`minTouchTarget`), com o ícone de 24 dp
+  centralizado. Sem borda nem fundo próprios.
+- **Não marcada:** ícone de círculo vazio em Ardósia. **Marcada:** ícone de círculo com
+  marca de seleção em Verde-Petróleo.
+- **Pressed:** `pressedFeedback`.
+- **Acessibilidade:** papel de caixa de seleção, estado marcada ou não marcada
+  (`accessibilityState.checked`), rótulo e dica recebidos de quem usa. O ícone fica oculto.
+- **Uso:** à esquerda de cada linha de tarefa.
+
+### Campo de texto (`TextField`)
+- **Estrutura:** coluna com 4 dp entre as partes: uma linha com rótulo e contador, o campo e
+  uma linha de apoio (mensagem de erro ou dica).
+- **Rótulo:** Label em Tinta, sempre visível (não é placeholder). **Contador:**
+  "N/máximo" em Caption Ardósia, à direita, alinhado pela linha de base, a 12 dp do rótulo.
+- **Campo:** fundo branco, contorno de 1,5 dp, raio de 12 dp (`md`), altura mínima de 48 dp
+  (`minTouchTarget`), padding de 8 × 12 dp, texto em Tinta no tamanho do Body (16) e cursor
+  em Verde-Petróleo. Com várias linhas, a altura mínima é de 96 dp e o texto começa no topo.
+- **Estados do contorno:** Cinza-Ardósia em repouso (3,75:1 sobre branco), Verde-Petróleo
+  em foco e Vermelho-Tijolo com erro.
+- **Linha de apoio:** com erro, a mensagem em Caption Vermelho-Tijolo. Sem erro, a dica
+  opcional em Caption Ardósia. A cor nunca é a única pista, porque o erro sempre vem em
+  texto.
+- **Acessibilidade:** para o leitor de tela, o campo concentra tudo. O rótulo do campo é o
+  rótulo visível. A dica falada é a mensagem de erro, quando existe. Sem erro, é a dica
+  visível mais o contador ("Um detalhe que ajude a começar, se quiser. 0 de 500
+  caracteres"), com a pontuação final de cada parte retirada para não ficar "..". Por isso o
+  rótulo, o contador e a dica visíveis ficam ocultos para o leitor de tela e nada é lido
+  duas vezes. A mensagem de erro continua visível e acessível, com
+  `accessibilityLiveRegion="polite"`.
+- **Fonte:** acompanha o tamanho de fonte do sistema, sem limite.
+
+### Formulário de tarefa (`TaskForm`, em `src/features/tasks/TaskForm.js`)
+Um formulário só para criar e editar. Na rota `/tarefa/formulario`, abre como modal por
+cima das abas (`presentation: 'modal'`). Com `?id=…`, entra no modo de edição.
+- **Tela:** área segura nas quatro bordas, fundo Névoa Fria.
+- **Cabeçalho:** faixa branca com linha fina inferior em Borda Suave e padding lateral de
+  8 dp. Tem três partes, a 8 dp uma da outra:
+  - "Cancelar", à esquerda: texto em Body Ardósia, dica "Fecha sem salvar";
+  - o título "Nova tarefa" ou "Editar tarefa", no centro: Heading, centralizado, com papel
+    de cabeçalho;
+  - "Salvar", à direita: texto em Button Verde-Petróleo. Fica no cabeçalho para continuar
+    visível com o teclado aberto.
+
+  Os dois botões de texto são locais do formulário (`HeaderButton`): altura e largura
+  mínimas de 48 dp, padding lateral de 8 dp, área de toque estendida em 8 dp, papel de
+  botão e `pressedFeedback`.
+- **Conteúdo:** rolagem com padding de 16 dp e 24 dp entre os blocos. Tocar fora do teclado
+  não perde o toque (`keyboardShouldPersistTaps="handled"`).
+  - **Título:** `TextField` com até 100 caracteres. Abre com o teclado no campo ao criar,
+    mas não ao editar.
+  - **Observação (opcional):** `TextField` com várias linhas, até 500 caracteres e a dica
+    "Um detalhe que ajude a começar, se quiser."
+  - **Linha "Para hoje":** um único controle do tipo chave. A linha inteira é tocável, com
+    altura mínima de 48 dp e `pressedFeedback`. À esquerda ficam "Para hoje" (Body Strong) e
+    a explicação 'Mostra a tarefa em "Tarefas de hoje", na tela inicial.' (Caption Ardósia).
+    À direita fica a chave nativa, com trilho desligado em Cinza-Ardósia, trilho ligado em
+    Verde-Petróleo e botão branco. Para o leitor de tela, é um elemento só: papel de chave,
+    estado ligado ou desligado, rótulo "Para hoje" e a explicação como dica. A chave
+    interna fica oculta para o leitor de tela, mas continua alternando ao toque direto.
+  - **"Excluir tarefa":** `Button` Danger com ícone de lixeira, só no modo de edição, com
+    16 dp a mais acima. Pede confirmação ("Excluir esta tarefa?") antes de apagar.
+- **Validação:** acontece ao tocar em "Salvar". As mensagens explicam como corrigir, sem tom
+  de alarme: "Escreva um título para a tarefa.", "Use até 100 caracteres no título." e "Use
+  até 500 caracteres na observação." O erro aparece no campo, é anunciado pelo leitor de
+  tela e some assim que o título é corrigido.
+- **Anúncios:** "Tarefa criada.", "Tarefa atualizada." e "Tarefa excluída."
+- **Tarefa inexistente:** na edição de uma tarefa que não existe mais, a tela mostra o
+  estado vazio "Esta tarefa não foi encontrada", com o botão "Voltar".
+
+### Carregamento (`LoadingState`)
+- Só aparece se a espera passar de 300 ms. Leituras rápidas não fazem a tela piscar, e o
+  componente nunca cria espera artificial.
+- Coluna centralizada, com indicador de atividade em Verde-Petróleo e a mensagem em
+  Caption Ardósia, a 8 dp um do outro, e 32 dp de padding em cima e embaixo.
+- **Acessibilidade:** um único elemento, com a mensagem como rótulo. A mensagem padrão é
+  "Carregando…". Nas listas de tarefas, é "Carregando suas tarefas…".
+- **Uso:** enquanto as tarefas são lidas do aparelho (`TasksStatusView`). Se a leitura
+  falhar, aparece um estado vazio com "Não foi possível carregar suas tarefas" e o botão
+  "Tentar de novo".
 
 ### Estado vazio (`EmptyState`)
 - Contorno tracejado de 1,5 dp em Cinza-Ardósia, raio de 20 dp, padding de 24 × 16 dp,
@@ -494,7 +642,10 @@ Um resumo simples do progresso, numa frase só. Os números completos ficam na a
   com os números e as palavras que os acompanham em Body Strong Verde-Petróleo. Singular e
   plural são ajustados (`pluralize`, em `src/utils/format.js`).
 - Logo abaixo, "Cada começo conta, inclusive os pequenos." em Caption Ardósia.
-- Sem dados da semana, é substituído por um estado vazio.
+- Sem dados da semana, é substituído por um estado vazio ("Seu resumo aparece aqui").
+- **Ao fim da Etapa 2:** como as sessões de foco ainda não existem (chegam com o
+  temporizador), `getWeekSummary()` sempre devolve `null`, e a tela mostra sempre o estado
+  vazio. Nenhum número é inventado. O mesmo vale para a aba Progresso.
 
 ### Resultado da sessão (`OutcomeRow`, local de `src/app/(tabs)/progresso.js`)
 Uma linha "rótulo e quantidade" para contar como as sessões terminaram.
@@ -510,10 +661,10 @@ Uma linha "rótulo e quantidade" para contar como as sessões terminaram.
   alerta nem destaque negativo.
 - **Acessibilidade:** a linha é um único elemento, lido como "[rótulo]: [valor]".
 
-### Aviso de demonstração (`DemoBadge`)
-- Fundo Amarelo-Aviso, texto Ocre Escuro, raio de 12 dp, padding de 12 dp, ícone de
-  informação de 18 dp.
-- "Modo demonstração." em Label, seguido da explicação em Caption. Sai na Etapa 2.
+*Removido na Etapa 2:* o aviso de demonstração (`DemoBadge`), junto com os dados de
+demonstração. As tarefas agora são reais e ficam salvas no aparelho. No modo de
+desenvolvimento, a aba Tarefas vazia mostra o botão "Carregar exemplos", que cria tarefas
+comuns.
 
 ### Cabeçalhos (`ScreenHeader`, `SectionHeader`)
 - **ScreenHeader:** título (Title, papel de cabeçalho) e subtítulo opcional (Body
@@ -535,8 +686,17 @@ Uma linha "rótulo e quantidade" para contar como as sessões terminaram.
 ### Ícones (`Icon`)
 - Catálogo fechado em `src/components/Icon.js`, com SF Symbols no iOS e Material Symbols
   no Android/web. Nenhum ícone é usado fora do catálogo.
-- Sempre decorativos (`accessible={false}`), porque o texto ao lado descreve a ação.
-- Tamanhos em uso: 18 (aviso), 20 (padrão e botões), 24 (tarefas), 32 (estados vazios).
+- Sempre decorativos (`accessible={false}` e `importantForAccessibility=
+  "no-hide-descendants"`), porque o texto ao lado descreve a ação.
+- Tamanhos em uso: 20 (padrão e botões), 24 (caixa de seleção das tarefas) e 32 (estados
+  vazios). Os ícones das abas usam o tamanho que a barra de abas fornece. O tamanho 18 saiu
+  com o aviso de demonstração.
+
+### Arquivos do template (fora do sistema)
+`src/components/` ainda tem arquivos do template inicial do Expo (`animated-icon`,
+`app-tabs`, `external-link`, `hint-row`, `themed-text`, `themed-view`, `web-badge` e
+`ui/collapsible`). Nenhuma tela do Destrava os importa e eles não seguem estes tokens, então
+não fazem parte do sistema de design (ver Inconsistências, itens 12 e 15).
 
 ## Do's and Don'ts
 
@@ -553,16 +713,18 @@ Uma linha "rótulo e quantidade" para contar como as sessões terminaram.
   3:1 para elemento gráfico.
 - **Do** reconhecer o progresso de forma discreta, com números e frases como "Cada começo
   conta".
-- **Do** usar, quando houver validação de formulário (ex.: título vazio), uma cor de erro
-  acessível acompanhada de uma mensagem que explique como corrigir, sem tom de alarme. Essa
-  cor ainda não existe e precisa virar token, com contraste verificado, antes do uso.
+- **Do** usar o token `error` (Vermelho-Tijolo, 6,14:1 sobre `background` e 6,65:1 sobre
+  `surface`) para erro de validação e ações que apagam algo, sempre acompanhado de uma
+  mensagem que explique como corrigir ou o que vai acontecer, sem tom de alarme.
+- **Do** pedir confirmação antes de qualquer ação que apague algo.
 
 ### Don't:
 - **Don't** usar sombras ou `elevation`.
 - **Don't** criar um segundo bloco escuro ou um destaque que concorra com o card "Seu
   próximo passo".
 - **Don't** mostrar o mesmo passo duas vezes na mesma tela.
-- **Don't** usar o amarelo de demonstração como cor de alerta, aviso ou destaque.
+- **Don't** usar o Vermelho-Tijolo (`error`) como destaque, urgência ou decoração, nem
+  sozinho, sem texto: ele só aparece com uma mensagem de erro ou numa ação que apaga algo.
 - **Don't** usar contorno tracejado fora dos estados vazios.
 - **Don't** gamificar: nada de sequências (streaks), medalhas, confete ou contadores que
   punem dias parados.
@@ -576,10 +738,11 @@ Uma linha "rótulo e quantidade" para contar como as sessões terminaram.
 
 Este levantamento foi feito durante a documentação (28/10/2026). Os itens resolvidos na
 Etapa 1.1 continuam listados, com o número original, para manter o histórico. Os itens
-pendentes são candidatos a decisão ou ajuste futuro.
+pendentes são candidatos a decisão ou ajuste futuro. Os itens 15 a 18 entraram na
+atualização da Etapa 2 (29/10/2026).
 
-**Resumo:** 10 resolvidos na Etapa 1.1 (1, 2, 3, 6, 7, 8, 9, 11, 13 e 14) e 4 pendentes
-(4, 5, 10 e 12).
+**Resumo:** 10 resolvidos na Etapa 1.1 (1, 2, 3, 6, 7, 8, 9, 11, 13 e 14) e 8 pendentes
+(4, 5, 10, 12, 15, 16, 17 e 18).
 
 ### Entre componentes e tokens
 1. ✅ **Resolvido na Etapa 1.1. Ação do SectionHeader com 44 dp.** Usava `minHeight: 44`
@@ -590,9 +753,12 @@ pendentes são candidatos a decisão ou ajuste futuro.
 3. ✅ **Resolvido na Etapa 1.1. Espaçamento fora da escala.** `TaskItem` usava `gap: 2`
    entre as linhas de texto. Agora usa `xs` (4).
 4. ⏳ **Pendente. Tamanhos de ícone sem token.** Os tamanhos 18, 20, 24 e 32 estão fixos em
-   cada componente, sem uma escala no tema.
+   cada componente, sem uma escala no tema. *Etapa 2:* o 18 saiu com o aviso de
+   demonstração, e hoje restam 20, 24 e 32.
 5. ⏳ **Pendente. Espessuras de borda sem token.** Existem 1 dp (Card), 1,5 dp (Button
    secundário, EmptyState) e `hairlineWidth` (TaskItem), todas fixas nos componentes.
+   *Etapa 2:* o 1,5 dp agora se repete também no Button Danger e no TextField, e o
+   `hairlineWidth` no cabeçalho do formulário.
 6. ✅ **Resolvido na Etapa 1.1. StatTile em caixa duplicava o Card.** O estilo `boxed`
    repetia fundo, borda, raio e padding do Card padrão. Agora reaproveita o Card.
 7. ✅ **Resolvido na Etapa 1.1. Padding do card de destaque definido na tela.** O Card
@@ -619,3 +785,21 @@ pendentes são candidatos a decisão ou ajuste futuro.
 14. ✅ **Resolvido na Etapa 1.1. Tabela de contraste do registro incompleta.** O registro
     não trazia o par `onHeroSecondary` / `hero` (9,11:1) e nomeava os pares de outro jeito.
     Agora a tabela está completa e usa os nomes dos tokens.
+
+### Etapa 2
+15. ⏳ **Pendente. Componentes do template em `src/components/`.** `animated-icon`,
+    `app-tabs`, `external-link`, `hint-row`, `themed-text`, `themed-view`, `web-badge` e
+    `ui/collapsible` vieram do template do Expo. Nenhuma tela do Destrava os importa, e eles
+    usam o tema do template (`src/constants/theme.ts`, item 12), não `src/theme`. Ficam ao
+    lado dos componentes reais e podem confundir.
+16. ⏳ **Pendente. Comentários desatualizados em `src/theme/index.js`.** O comentário de
+    `borderStrong` diz só "contorno tracejado dos estados vazios", mas a cor também contorna
+    os campos de texto e o trilho desligado da chave "Para hoje". O de `pressedFeedback` diz
+    "botões e links de seção", mas ele também é usado na caixa de seleção, na linha de
+    tarefa, nos botões do cabeçalho do formulário e na linha "Para hoje".
+17. ⏳ **Pendente. Campo de texto fora da Variant-Only Rule.** O texto digitado no
+    `TextField` não passa por `AppText` (é um `TextInput`) e usa só `typography.body.fontSize`,
+    sem a entrelinha e o peso da variante. A regra não registra essa exceção.
+18. ⏳ **Pendente. Altura do campo de várias linhas sem token.** O `TextField` com várias
+    linhas usa `minHeight: 96`, um valor fixo no componente. Equivale a 2 ×
+    `minTouchTarget`, mas não vem do tema.
