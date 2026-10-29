@@ -3,6 +3,7 @@ import { AccessibilityInfo, Pressable, ScrollView, StyleSheet, Switch, View } fr
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText } from '../../components/AppText';
+import { Button } from '../../components/Button';
 import { TextField } from '../../components/TextField';
 import { colors, minTouchTarget, pressedFeedback, spacing } from '../../theme';
 import { NOTES_MAX_LENGTH, TITLE_MAX_LENGTH, hasErrors, validateTaskFields } from './validation';
@@ -29,12 +30,21 @@ function HeaderButton({ label, onPress, emphasis = false, accessibilityHint }) {
 }
 
 /**
- * Formulário de tarefa, reutilizável para criar (agora) e editar (parte 2c).
+ * Formulário de tarefa, reutilizável para criar e editar.
  * "Salvar" fica no cabeçalho para continuar visível mesmo com o teclado aberto.
  * - initialValues: { title, notes, forToday }
  * - onSubmit(fields): chamado só quando os campos são válidos.
+ * - onDelete: opcional; quando existe (edição), mostra o botão "Excluir tarefa".
+ * - autoFocusTitle: abre o teclado no título (útil ao criar; na edição fica desligado).
  */
-export function TaskForm({ heading, initialValues = EMPTY_VALUES, onSubmit, onCancel }) {
+export function TaskForm({
+  heading,
+  initialValues = EMPTY_VALUES,
+  onSubmit,
+  onCancel,
+  onDelete,
+  autoFocusTitle = true,
+}) {
   const [title, setTitle] = useState(initialValues.title);
   const [notes, setNotes] = useState(initialValues.notes);
   const [forToday, setForToday] = useState(initialValues.forToday);
@@ -78,7 +88,7 @@ export function TaskForm({ heading, initialValues = EMPTY_VALUES, onSubmit, onCa
           onChangeText={handleTitleChange}
           error={errors.title}
           maxLength={TITLE_MAX_LENGTH}
-          autoFocus
+          autoFocus={autoFocusTitle}
           returnKeyType="done"
         />
 
@@ -109,6 +119,17 @@ export function TaskForm({ heading, initialValues = EMPTY_VALUES, onSubmit, onCa
             ios_backgroundColor={colors.borderStrong}
           />
         </View>
+
+        {onDelete ? (
+          <Button
+            label="Excluir tarefa"
+            icon="delete"
+            variant="danger"
+            onPress={onDelete}
+            accessibilityHint="Pede confirmação antes de excluir"
+            style={styles.deleteButton}
+          />
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
@@ -152,5 +173,8 @@ const styles = StyleSheet.create({
   switchTexts: {
     flex: 1,
     gap: spacing.xs,
+  },
+  deleteButton: {
+    marginTop: spacing.lg,
   },
 });

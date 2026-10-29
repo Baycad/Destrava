@@ -1,18 +1,18 @@
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '../../components/AppText';
-import { Icon } from '../../components/Icon';
-import { colors, spacing } from '../../theme';
+import { Checkbox } from '../../components/Checkbox';
+import { colors, pressedFeedback, spacing } from '../../theme';
 import { countSteps, getFirstPendingStep } from './selectors';
 
 /**
- * Linha de tarefa: título, próximo passo e quantos passos já foram feitos.
+ * Linha de tarefa com duas áreas de toque:
+ * - a caixa de seleção, à esquerda, conclui ou reabre a tarefa;
+ * - o restante da linha abre a edição.
  * - isHighlighted: true quando o próximo passo desta tarefa já aparece no card
  *   "Seu próximo passo". Nesse caso a linha não repete o passo, só aponta para o card.
- * Nesta etapa a linha é apenas informativa (sem toque); concluir e abrir
- * a tarefa serão implementados na Etapa 2.
  */
-export function TaskItem({ task, showDivider = false, isHighlighted = false }) {
+export function TaskItem({ task, onToggle, onOpen, showDivider = false, isHighlighted = false }) {
   const { done: stepsDone, total } = countSteps(task);
   const nextStep = getFirstPendingStep(task);
   const isDone = task.status === 'done';
@@ -33,20 +33,23 @@ export function TaskItem({ task, showDivider = false, isHighlighted = false }) {
       : `Próximo: ${nextStep.title}`
     : null;
 
-  // Frase única lida pelo TalkBack/VoiceOver ao focar a linha.
+  // Frase única lida pelo TalkBack/VoiceOver ao focar a área de edição.
   const accessibilityLabel = [task.title, summary, nextStepText].filter(Boolean).join('. ');
 
   return (
-    <View
-      style={[styles.row, showDivider ? styles.divider : null]}
-      accessible
-      accessibilityLabel={accessibilityLabel}>
-      <Icon
-        name={isDone ? 'done' : 'pending'}
-        size={24}
-        color={isDone ? colors.primary : colors.textSecondary}
+    <View style={[styles.row, showDivider ? styles.divider : null]}>
+      <Checkbox
+        checked={isDone}
+        onChange={() => onToggle(task.id)}
+        label={task.title}
+        hint={isDone ? 'Reabre a tarefa' : 'Marca a tarefa como concluída'}
       />
-      <View style={styles.texts}>
+      <Pressable
+        onPress={() => onOpen(task.id)}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint="Abre a edição da tarefa"
+        style={({ pressed }) => [styles.texts, pressed ? pressedFeedback : null]}>
         <AppText variant="bodyStrong" color={isDone ? colors.textSecondary : colors.text}>
           {task.title}
         </AppText>
@@ -58,7 +61,7 @@ export function TaskItem({ task, showDivider = false, isHighlighted = false }) {
         <AppText variant="caption" color={colors.textSecondary}>
           {summary}
         </AppText>
-      </View>
+      </Pressable>
     </View>
   );
 }
@@ -67,8 +70,9 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: spacing.md,
-    padding: spacing.lg,
+    paddingVertical: spacing.sm,
+    paddingLeft: spacing.xs,
+    paddingRight: spacing.lg,
   },
   divider: {
     borderTopWidth: StyleSheet.hairlineWidth,
@@ -77,5 +81,7 @@ const styles = StyleSheet.create({
   texts: {
     flex: 1,
     gap: spacing.xs,
+    paddingVertical: spacing.sm,
+    paddingLeft: spacing.xs,
   },
 });

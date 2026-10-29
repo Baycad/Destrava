@@ -14,6 +14,11 @@ const VARIANTS = {
     container: { backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.primary },
     textColor: colors.primary,
   },
+  // Ações que apagam algo (ex.: "Excluir tarefa"). Contorno e texto na cor de erro.
+  danger: {
+    container: { backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.error },
+    textColor: colors.error,
+  },
   // Usada dentro do card escuro "Seu próximo passo"
   hero: {
     container: { backgroundColor: colors.heroAction },

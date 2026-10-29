@@ -15,6 +15,7 @@ const ICONS = {
   done: { ios: 'checkmark.circle.fill', android: 'check_circle', web: 'check_circle' },
   info: { ios: 'info.circle', android: 'info', web: 'info' },
   leaf: { ios: 'leaf', android: 'eco', web: 'eco' },
+  delete: { ios: 'trash', android: 'delete', web: 'delete' },
 };
 
 /**

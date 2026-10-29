@@ -9,6 +9,18 @@ export function generateId() {
 }
 
 /**
+ * Padroniza os campos vindos do formulário: tira espaços das pontas
+ * e garante que "para hoje" seja verdadeiro ou falso.
+ */
+export function normalizeFields(fields) {
+  return {
+    title: fields.title.trim(),
+    notes: (fields.notes ?? '').trim(),
+    forToday: Boolean(fields.forToday),
+  };
+}
+
+/**
  * Monta uma tarefa nova.
  * - fields: { title, notes, forToday }
  * - now: data/hora atual em texto ISO (recebida de fora para manter a função previsível)
@@ -16,10 +28,8 @@ export function generateId() {
 export function createTask(fields, now, id = generateId()) {
   return {
     id,
-    title: fields.title.trim(),
-    notes: (fields.notes ?? '').trim(),
+    ...normalizeFields(fields),
     status: 'pending',
-    forToday: Boolean(fields.forToday),
     steps: [],
     createdAt: now,
     updatedAt: now,

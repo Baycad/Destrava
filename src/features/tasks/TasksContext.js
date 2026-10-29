@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 
 import { readTasks, writeTasks } from '../../services/storage/taskStorage';
 import { buildExampleTasks } from './exampleTasks';
-import { createTask } from './taskModel';
+import { createTask, normalizeFields } from './taskModel';
 import { initialTasksState, tasksReducer } from './tasksReducer';
 
 const TasksContext = createContext(null);
@@ -60,7 +60,8 @@ export function TasksProvider({ children }) {
     tasks: state.tasks,
     reload: loadTasks,
     addTask: (fields) => dispatch({ type: 'task/added', task: createTask(fields, now()) }),
-    updateTask: (id, changes) => dispatch({ type: 'task/updated', id, changes, now: now() }),
+    updateTask: (id, fields) =>
+      dispatch({ type: 'task/updated', id, changes: normalizeFields(fields), now: now() }),
     toggleTask: (id) => dispatch({ type: 'task/toggled', id, now: now() }),
     deleteTask: (id) => dispatch({ type: 'task/deleted', id }),
     loadExamples: () => dispatch({ type: 'tasks/replaced', tasks: buildExampleTasks(now()) }),
