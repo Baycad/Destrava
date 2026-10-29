@@ -10,7 +10,6 @@
 //   onHero / hero ................. 12,01:1
 //   onHeroSecondary / hero ........  9,11:1
 //   onHeroAction / heroAction .....  8,36:1
-//   demoText / demoBackground .....  7,02:1
 //   textSecondary / surfaceMuted ..  6,24:1
 //   borderStrong / background .....  3,46:1 (elemento gráfico, mínimo 3:1)
 //   borderStrong / surface ........  3,75:1 (contorno de campo de texto)
@@ -41,10 +40,6 @@ export const colors = {
   onHeroSecondary: '#CFE5DF',
   heroAction: '#9EE6C9',
   onHeroAction: '#0F3D3A',
-
-  // Aviso de dados de demonstração (sem uso desde a Etapa 2; pode ser removido)
-  demoBackground: '#FFF4CC',
-  demoText: '#6B4E00',
 
   // Erro de validação de formulário: vermelho-tijolo sóbrio, sem tom de alarme.
   // Sempre acompanhado de uma mensagem em texto, nunca só a cor.

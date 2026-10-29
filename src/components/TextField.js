@@ -29,7 +29,14 @@ export function TextField({
 
   const counterText = maxLength ? `${value.length} de ${maxLength} caracteres` : null;
   // Com erro, a dica falada é a mensagem de erro; sem erro, a dica e o contador.
-  const spokenHint = error ?? ([hint, counterText].filter(Boolean).join('. ') || undefined);
+  // A pontuação final de cada parte é retirada antes de juntar, para não ficar "..".
+  const spokenHint =
+    error ??
+    ([hint, counterText]
+      .filter(Boolean)
+      .map((part) => part.replace(/[.\s]+$/, ''))
+      .join('. ') ||
+      undefined);
 
   let borderColor = colors.borderStrong;
   if (error) {

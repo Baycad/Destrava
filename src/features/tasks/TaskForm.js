@@ -112,7 +112,7 @@ export function TaskForm({
           accessibilityState={{ checked: forToday }}
           accessibilityLabel="Para hoje"
           accessibilityHint='Mostra a tarefa em "Tarefas de hoje", na tela inicial'
-          style={styles.switchRow}>
+          style={({ pressed }) => [styles.switchRow, pressed ? pressedFeedback : null]}>
           <View style={styles.switchTexts}>
             <AppText variant="bodyStrong">Para hoje</AppText>
             <AppText variant="caption" color={colors.textSecondary}>
