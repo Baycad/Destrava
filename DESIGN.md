@@ -377,6 +377,13 @@ registrado do mesmo jeito.
 da variante, só são permitidos a cor e ajustes de layout (alinhamento, `flexShrink`,
 margens); tamanho, peso e entrelinha vêm sempre da variante.
 
+*Exceção registrada (testes com Jest):* o texto digitado no `TextField` fica num
+`TextInput`, não num `Text`, então não passa por `AppText`. Ele usa só o tamanho do token
+`body` (`typography.body.fontSize`), sem a entrelinha da variante, porque forçar a
+entrelinha num `TextInput` costuma desalinhar o texto e o cursor no Android. Rótulo,
+contador, dica e mensagem de erro do campo continuam em `AppText` (ver Inconsistências,
+item 17).
+
 ## Layout
 
 Coluna única em retrato (`orientation: portrait`). Toda tela usa `Screen`: área segura no
@@ -484,7 +491,8 @@ etapa futura. A dica falada é "Em construção: por enquanto, mostra um aviso".
 
 Sem passo para mostrar, o card continua no lugar, com o rótulo "Seu próximo passo", e muda
 título (Display), mensagem (Body Menta Esmaecida) e botão Hero conforme a situação
-(`getEmptyHeroContent`, em `src/app/(tabs)/index.js`):
+(`getEmptyHeroContent`, em `src/features/tasks/heroContent.js`, fora de `src/app/` para
+poder ser testado com o Jest):
 
 | Situação | Título | Mensagem | Botão | Ação |
 |---|---|---|---|---|
@@ -556,7 +564,8 @@ Mostra uma tarefa e, logo abaixo, o passo que vem a seguir.
   "N/máximo" em Caption Ardósia, à direita, alinhado pela linha de base, a 12 dp do rótulo.
 - **Campo:** fundo branco, contorno de 1,5 dp, raio de 12 dp (`md`), altura mínima de 48 dp
   (`minTouchTarget`), padding de 8 × 12 dp, texto em Tinta no tamanho do Body (16) e cursor
-  em Verde-Petróleo. Com várias linhas, a altura mínima é de 96 dp e o texto começa no topo.
+  em Verde-Petróleo. Com várias linhas, a altura mínima vem do token
+  `multilineFieldMinHeight` (2 × `minTouchTarget` = 96 dp), e o texto começa no topo.
 - **Estados do contorno:** Cinza-Ardósia em repouso (3,75:1 sobre branco), Verde-Petróleo
   em foco e Vermelho-Tijolo com erro.
 - **Linha de apoio:** com erro, a mensagem em Caption Vermelho-Tijolo. Sem erro, a dica
@@ -565,7 +574,9 @@ Mostra uma tarefa e, logo abaixo, o passo que vem a seguir.
 - **Acessibilidade:** para o leitor de tela, o campo concentra tudo. O rótulo do campo é o
   rótulo visível. A dica falada é a mensagem de erro, quando existe. Sem erro, é a dica
   visível mais o contador ("Um detalhe que ajude a começar, se quiser. 0 de 500
-  caracteres"), com a pontuação final de cada parte retirada para não ficar "..". Por isso o
+  caracteres"), com a pontuação final de cada parte retirada para não ficar "..". Quem monta
+  essa frase é a função `buildSpokenHint`, em `src/utils/accessibility.js`, que é coberta por
+  testes automáticos. Por isso o
   rótulo, o contador e a dica visíveis ficam ocultos para o leitor de tela e nada é lido
   duas vezes. A mensagem de erro continua visível e acessível, com
   `accessibilityLiveRegion="polite"`.
@@ -741,8 +752,9 @@ Etapa 1.1 continuam listados, com o número original, para manter o histórico. 
 pendentes são candidatos a decisão ou ajuste futuro. Os itens 15 a 18 entraram na
 atualização da Etapa 2 (29/10/2026).
 
-**Resumo:** 10 resolvidos na Etapa 1.1 (1, 2, 3, 6, 7, 8, 9, 11, 13 e 14) e 8 pendentes
-(4, 5, 10, 12, 15, 16, 17 e 18).
+**Resumo:** 12 resolvidos (10 na Etapa 1.1: 1, 2, 3, 6, 7, 8, 9, 11, 13 e 14; 2 na parte de
+testes com Jest: 16 e 18), 1 aceito como exceção registrada (17) e 5 pendentes (4, 5, 10,
+12 e 15).
 
 ### Entre componentes e tokens
 1. ✅ **Resolvido na Etapa 1.1. Ação do SectionHeader com 44 dp.** Usava `minHeight: 44`
@@ -792,14 +804,19 @@ atualização da Etapa 2 (29/10/2026).
     `ui/collapsible` vieram do template do Expo. Nenhuma tela do Destrava os importa, e eles
     usam o tema do template (`src/constants/theme.ts`, item 12), não `src/theme`. Ficam ao
     lado dos componentes reais e podem confundir.
-16. ⏳ **Pendente. Comentários desatualizados em `src/theme/index.js`.** O comentário de
-    `borderStrong` diz só "contorno tracejado dos estados vazios", mas a cor também contorna
-    os campos de texto e o trilho desligado da chave "Para hoje". O de `pressedFeedback` diz
-    "botões e links de seção", mas ele também é usado na caixa de seleção, na linha de
-    tarefa, nos botões do cabeçalho do formulário e na linha "Para hoje".
-17. ⏳ **Pendente. Campo de texto fora da Variant-Only Rule.** O texto digitado no
-    `TextField` não passa por `AppText` (é um `TextInput`) e usa só `typography.body.fontSize`,
-    sem a entrelinha e o peso da variante. A regra não registra essa exceção.
-18. ⏳ **Pendente. Altura do campo de várias linhas sem token.** O `TextField` com várias
-    linhas usa `minHeight: 96`, um valor fixo no componente. Equivale a 2 ×
-    `minTouchTarget`, mas não vem do tema.
+16. ✅ **Resolvido na parte de testes com Jest. Comentários desatualizados em
+    `src/theme/index.js`.** O comentário de `borderStrong` dizia só "contorno tracejado dos
+    estados vazios", mas a cor também contorna os campos de texto e o trilho desligado da
+    chave "Para hoje". O de `pressedFeedback` dizia "botões e links de seção", mas ele também
+    é usado na caixa de seleção, na linha de tarefa, nos botões do cabeçalho do formulário e
+    na linha "Para hoje". Agora os dois comentários listam os usos reais.
+17. 🟰 **Aceito como exceção registrada. Campo de texto fora da Variant-Only Rule.** O texto
+    digitado no `TextField` não passa por `AppText` e usa só `typography.body.fontSize`, sem
+    a entrelinha e o peso da variante. Motivo: o texto digitado fica num `TextInput`, não num
+    `Text`; o tamanho da fonte vem do token `body`, e forçar a entrelinha num `TextInput`
+    costuma causar desalinhamentos no Android. A exceção está registrada em "The
+    Variant-Only Rule".
+18. ✅ **Resolvido na parte de testes com Jest. Altura do campo de várias linhas sem
+    token.** O `TextField` com várias linhas usava `minHeight: 96`, um valor fixo no
+    componente. Agora usa o token `multilineFieldMinHeight` (2 × `minTouchTarget` = 96 dp),
+    definido em `src/theme/index.js`.

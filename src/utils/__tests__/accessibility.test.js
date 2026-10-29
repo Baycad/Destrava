@@ -21,6 +21,10 @@ describe('buildSpokenHint (dica falada do campo de texto)', () => {
     ).toBe('Escreva um título para a tarefa.');
   });
 
+  test('sem valor informado, o contador começa em zero', () => {
+    expect(buildSpokenHint({ maxLength: 10 })).toBe('0 de 10 caracteres');
+  });
+
   test('dica com vários pontos e espaços no fim', () => {
     expect(buildSpokenHint({ hint: 'Dica...  ', value: '', maxLength: 10 })).toBe('Dica. 0 de 10 caracteres');
   });
