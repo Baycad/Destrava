@@ -43,6 +43,10 @@ export default function TodayScreen() {
     router.navigate('/tarefas');
   }
 
+  function goToNewTask() {
+    router.push('/tarefa/formulario');
+  }
+
   function goToProgress() {
     router.navigate('/progresso');
   }
@@ -103,14 +107,25 @@ export default function TodayScreen() {
                 ? 'Anote algo que você vem adiando. Depois, a gente divide em partes pequenas.'
                 : 'Escolha uma tarefa e escreva uma ação que caiba em poucos minutos.'}
             </AppText>
-            <Button
-              label={tasks.length === 0 ? 'Criar minha primeira tarefa' : 'Ver minhas tarefas'}
-              icon={tasks.length === 0 ? 'add' : 'tasks'}
-              variant="hero"
-              onPress={goToTasks}
-              accessibilityHint="Abre a aba Tarefas"
-              style={styles.heroButton}
-            />
+            {tasks.length === 0 ? (
+              <Button
+                label="Criar minha primeira tarefa"
+                icon="add"
+                variant="hero"
+                onPress={goToNewTask}
+                accessibilityHint="Abre o formulário de nova tarefa"
+                style={styles.heroButton}
+              />
+            ) : (
+              <Button
+                label="Ver minhas tarefas"
+                icon="tasks"
+                variant="hero"
+                onPress={goToTasks}
+                accessibilityHint="Abre a aba Tarefas"
+                style={styles.heroButton}
+              />
+            )}
           </>
         )}
       </Card>

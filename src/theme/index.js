@@ -13,6 +13,9 @@
 //   demoText / demoBackground .....  7,02:1
 //   textSecondary / surfaceMuted ..  6,24:1
 //   borderStrong / background .....  3,46:1 (elemento gráfico, mínimo 3:1)
+//   borderStrong / surface ........  3,75:1 (contorno de campo de texto)
+//   error / background ............  6,14:1
+//   error / surface ...............  6,65:1
 
 export const colors = {
   // Fundos
@@ -39,9 +42,13 @@ export const colors = {
   heroAction: '#9EE6C9',
   onHeroAction: '#0F3D3A',
 
-  // Aviso de dados de demonstração
+  // Aviso de dados de demonstração (sem uso desde a Etapa 2; pode ser removido)
   demoBackground: '#FFF4CC',
   demoText: '#6B4E00',
+
+  // Erro de validação de formulário: vermelho-tijolo sóbrio, sem tom de alarme.
+  // Sempre acompanhado de uma mensagem em texto, nunca só a cor.
+  error: '#A8322B',
 };
 
 // Escala de espaçamento (múltiplos de 4) para manter o ritmo visual consistente.
@@ -69,6 +76,9 @@ export const minTouchTarget = 48;
 // era cortado embaixo (teste de fonte ampliada, 28/10/2026). O conteúdo das telas
 // continua crescendo sem limite.
 export const tabLabelMaxFontScale = 1.2;
+
+// Altura da área das abas (sem contar a barra de navegação do sistema).
+// Um pouco maior que o padrão para caber o rótulo ampliado até o limite acima.
 export const tabBarHeight = 56;
 
 // Resposta visual ao toque, igual para todos os elementos tocáveis

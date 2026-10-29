@@ -1,4 +1,5 @@
-import { Alert, StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '../../components/AppText';
 import { Button } from '../../components/Button';
@@ -14,15 +15,12 @@ import { colors, spacing } from '../../theme';
 
 /** Aba "Tarefas": lista as tarefas salvas no aparelho. */
 export default function TasksScreen() {
+  const router = useRouter();
   const { status, tasks, loadExamples } = useTasks();
   const { pending, done } = splitByStatus(tasks);
 
   function handleNewTask() {
-    // O formulário de criação chega na parte 2b.
-    Alert.alert(
-      'Criação de tarefas em construção',
-      'Em breve você poderá criar, editar e concluir tarefas, que ficarão salvas no aparelho.'
-    );
+    router.push('/tarefa/formulario');
   }
 
   const header = (
@@ -73,7 +71,13 @@ export default function TasksScreen() {
         </>
       ) : (
         <>
-          <Button label="Nova tarefa" icon="add" variant="secondary" onPress={handleNewTask} />
+          <Button
+            label="Nova tarefa"
+            icon="add"
+            variant="secondary"
+            onPress={handleNewTask}
+            accessibilityHint="Abre o formulário de nova tarefa"
+          />
 
           <SectionHeader title={`Pendentes (${pending.length})`} />
           {pending.length > 0 ? (
