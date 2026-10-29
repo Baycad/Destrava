@@ -10,6 +10,9 @@ import { AppText } from './AppText';
  * - Com foco, o contorno fica verde; com erro, fica na cor de erro, e a mensagem
  *   aparece em texto logo abaixo (a cor nunca é a única pista).
  * - A mensagem de erro é anunciada pelo leitor de tela quando aparece.
+ * - Para o leitor de tela, rótulo, contador e dica fazem parte do próprio campo
+ *   (rótulo + dica do TextInput). Os textos visíveis equivalentes ficam ocultos
+ *   para ele, para nada ser lido duas vezes (auditoria de acessibilidade da Etapa 2).
  */
 export function TextField({
   label,
@@ -24,6 +27,10 @@ export function TextField({
 }) {
   const [focused, setFocused] = useState(false);
 
+  const counterText = maxLength ? `${value.length} de ${maxLength} caracteres` : null;
+  // Com erro, a dica falada é a mensagem de erro; sem erro, a dica e o contador.
+  const spokenHint = error ?? ([hint, counterText].filter(Boolean).join('. ') || undefined);
+
   let borderColor = colors.borderStrong;
   if (error) {
     borderColor = colors.error;
@@ -33,15 +40,16 @@ export function TextField({
 
   return (
     <View style={styles.container}>
-      <View style={styles.labelRow}>
+      {/* Visível para todos, mas oculto para o leitor de tela (já está no campo). */}
+      <View
+        style={styles.labelRow}
+        importantForAccessibility="no-hide-descendants"
+        accessibilityElementsHidden>
         <AppText variant="label" style={styles.label}>
           {label}
         </AppText>
         {maxLength ? (
-          <AppText
-            variant="caption"
-            color={colors.textSecondary}
-            accessibilityLabel={`${value.length} de ${maxLength} caracteres`}>
+          <AppText variant="caption" color={colors.textSecondary}>
             {value.length}/{maxLength}
           </AppText>
         ) : null}
@@ -57,7 +65,7 @@ export function TextField({
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         accessibilityLabel={label}
-        accessibilityHint={error ?? hint}
+        accessibilityHint={spokenHint}
         selectionColor={colors.primary}
         style={[styles.input, multiline ? styles.multiline : null, { borderColor }]}
       />
@@ -67,7 +75,11 @@ export function TextField({
           {error}
         </AppText>
       ) : hint ? (
-        <AppText variant="caption" color={colors.textSecondary}>
+        <AppText
+          variant="caption"
+          color={colors.textSecondary}
+          importantForAccessibility="no"
+          accessibilityElementsHidden>
           {hint}
         </AppText>
       ) : null}

@@ -102,7 +102,17 @@ export function TaskForm({
           multiline
         />
 
-        <View style={styles.switchRow}>
+        {/*
+          A linha inteira é um único controle "chave": tocar no texto também alterna,
+          e o leitor de tela lê "Para hoje, chave, ativada/desativada" uma vez só.
+        */}
+        <Pressable
+          onPress={() => setForToday((current) => !current)}
+          accessibilityRole="switch"
+          accessibilityState={{ checked: forToday }}
+          accessibilityLabel="Para hoje"
+          accessibilityHint='Mostra a tarefa em "Tarefas de hoje", na tela inicial'
+          style={styles.switchRow}>
           <View style={styles.switchTexts}>
             <AppText variant="bodyStrong">Para hoje</AppText>
             <AppText variant="caption" color={colors.textSecondary}>
@@ -112,13 +122,13 @@ export function TaskForm({
           <Switch
             value={forToday}
             onValueChange={setForToday}
-            accessibilityLabel="Para hoje"
-            accessibilityHint='Mostra a tarefa em "Tarefas de hoje"'
+            importantForAccessibility="no-hide-descendants"
+            accessibilityElementsHidden
             trackColor={{ false: colors.borderStrong, true: colors.primary }}
             thumbColor={colors.surface}
             ios_backgroundColor={colors.borderStrong}
           />
-        </View>
+        </Pressable>
 
         {onDelete ? (
           <Button

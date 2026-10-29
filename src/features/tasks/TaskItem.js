@@ -33,8 +33,9 @@ export function TaskItem({ task, onToggle, onOpen, showDivider = false, isHighli
       : `Próximo: ${nextStep.title}`
     : null;
 
-  // Frase única lida pelo TalkBack/VoiceOver ao focar a área de edição.
-  const accessibilityLabel = [task.title, summary, nextStepText].filter(Boolean).join('. ');
+  // Frase única lida pelo TalkBack/VoiceOver ao focar a área de edição,
+  // na mesma ordem em que os textos aparecem na tela.
+  const accessibilityLabel = [task.title, nextStepText, summary].filter(Boolean).join('. ');
 
   return (
     <View style={[styles.row, showDivider ? styles.divider : null]}>
