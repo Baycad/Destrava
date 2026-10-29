@@ -24,7 +24,7 @@ export const colors = {
 
   // Bordas
   border: '#D8E0E5', // divisórias decorativas
-  borderStrong: '#78868F', // contorno tracejado dos estados vazios
+  borderStrong: '#78868F', // contorno dos estados vazios e dos campos de texto; trilho desligado da chave
 
   // Texto
   text: '#17222B',
@@ -66,6 +66,9 @@ export const radius = {
 // Área mínima de toque recomendada (48 dp no Android, 44 pt no iOS).
 export const minTouchTarget = 48;
 
+// Altura mínima de um campo de texto com várias linhas (o dobro da área de toque).
+export const multilineFieldMinHeight = minTouchTarget * 2;
+
 // Limite de ampliação do rótulo das abas. Exceção à regra "fonte sem limite":
 // a barra de abas tem altura fixa, e com a fonte do sistema muito grande o rótulo
 // era cortado embaixo (teste de fonte ampliada, 28/10/2026). O conteúdo das telas
@@ -76,8 +79,9 @@ export const tabLabelMaxFontScale = 1.2;
 // Um pouco maior que o padrão para caber o rótulo ampliado até o limite acima.
 export const tabBarHeight = 56;
 
-// Resposta visual ao toque, igual para todos os elementos tocáveis
-// (botões e links de seção): fica um pouco transparente e encolhe levemente.
+// Resposta visual ao toque, igual para todos os elementos tocáveis (botões, links de
+// seção, caixa de seleção, linha de tarefa, botões do cabeçalho do formulário e linha
+// "Para hoje"): fica um pouco transparente e encolhe levemente.
 export const pressedFeedback = {
   opacity: 0.8,
   transform: [{ scale: 0.98 }],

@@ -1,7 +1,15 @@
 import { useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 
-import { colors, minTouchTarget, radius, spacing, typography } from '../theme';
+import {
+  colors,
+  minTouchTarget,
+  multilineFieldMinHeight,
+  radius,
+  spacing,
+  typography,
+} from '../theme';
+import { buildSpokenHint } from '../utils/accessibility';
 import { AppText } from './AppText';
 
 /**
@@ -27,16 +35,8 @@ export function TextField({
 }) {
   const [focused, setFocused] = useState(false);
 
-  const counterText = maxLength ? `${value.length} de ${maxLength} caracteres` : null;
   // Com erro, a dica falada é a mensagem de erro; sem erro, a dica e o contador.
-  // A pontuação final de cada parte é retirada antes de juntar, para não ficar "..".
-  const spokenHint =
-    error ??
-    ([hint, counterText]
-      .filter(Boolean)
-      .map((part) => part.replace(/[.\s]+$/, ''))
-      .join('. ') ||
-      undefined);
+  const spokenHint = buildSpokenHint({ error, hint, value, maxLength });
 
   let borderColor = colors.borderStrong;
   if (error) {
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     fontSize: typography.body.fontSize,
   },
   multiline: {
-    minHeight: 96,
+    minHeight: multilineFieldMinHeight,
     textAlignVertical: 'top',
   },
 });
