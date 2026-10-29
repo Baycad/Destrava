@@ -3,15 +3,20 @@
 Atualize este arquivo ao final de cada etapa. Uma funcionalidade só é marcada como
 **testada** depois de executada de fato em um aparelho ou emulador.
 
-Última atualização: 28/10/2026 (Etapa 1.1 concluída)
+Última atualização: 29/10/2026 (Etapa 2 e testes automáticos concluídos)
 
 ## Ambiente
 
 - Windows 10, VS Code, Node.js v22.20.0
-- Expo SDK 58, React Native 0.88.0, React 19.3.0, Expo Router (rotas em `src/app`)
+- Expo SDK 58, React Native 0.88.1 (era 0.88.0 até o fim da Etapa 2), React 19.3.0,
+  Expo Router (rotas em `src/app`)
+- Persistência: `@react-native-async-storage/async-storage` 2.2.0 (desde a Etapa 2a)
+- Testes automáticos: `jest` 30.5.2, `jest-expo` 58.0.13 e `@types/jest` 30.0.0, só como
+  dependências de desenvolvimento. Comandos: `npm test` e `npm run test:coverage`
 - Testes em aparelho Android físico com Expo Go (SDK 58)
 - `npx expo-doctor`: 20/20 aprovadas (antes da Etapa 1)
-- Repositório Git próprio em `X:\programação\Destrava` (branch `main`)
+- Repositório Git próprio em `X:\programação\Destrava` (branch `main`), conectado a um
+  repositório remoto no GitHub (`origin/main`) desde a Etapa 2
 - Impeccable 4.8.0 instalado no escopo de usuário (`C:\Users\Lucas Guerra\.claude`),
   usado pelo Claude Code no VS Code
 
@@ -26,7 +31,19 @@ Atualize este arquivo ao final de cada etapa. Uma funcionalidade só é marcada 
 | (hash a registrar) | docs: adiciona DESIGN.md com o sistema visual |
 | (hash a registrar) | docs: avaliacao heuristica da tela Hoje |
 | (hash a registrar) | feat: etapa 1.1 - hierarquia da tela Hoje e consistencia do sistema visual |
-| (hash a registrar) | fix: rotulos das abas cortados com fonte ampliada |
+| `0593d37` | fix: rotulos das abas cortados com fonte ampliada |
+| (hash a registrar) | docs: registro da etapa 1.1 com resultados dos testes |
+| `f6e8b65` | docs: DESIGN.md atualizado com a etapa 1.1 |
+| `4cb682c` | chore: restaura regras do Impeccable no .gitignore |
+| (hash a registrar) | feat: etapa 2a - tarefas salvas no aparelho (AsyncStorage) |
+| `b139326` | feat: etapa 2b - formulario de criacao de tarefas |
+| `e911cbc` | feat: etapa 2c - concluir, editar e excluir tarefas |
+| `fe1c7ab` | fix: etapa 2d - card Hoje sem pendencias e acessibilidade do formulario |
+| `7e85b66` | fix: pontuacao da dica falada, toque na linha Para hoje e tokens de demonstracao |
+| `ad6c750` | chore: react-native 0.88.1 (compativel com o SDK 58) |
+| `291e063` | docs: etapa 2 concluida - registro, DESIGN.md e testes |
+| `6c2be5b` | test: jest configurado com testes de logica |
+| (hash a registrar) | fix: pacotes do jest so em devDependencies, cobertura de todo o src e teste do buildSpokenHint |
 
 Para preencher os hashes: `git --no-pager log --oneline`.
 
@@ -150,6 +167,28 @@ calculados durante a documentação, está no `DESIGN.md`.
   `icacls "X:\programação\Destrava" /setowner "lucas\lucas guerra" /T`.
 - **Verificação:** `git status` limpo e criação/remoção de arquivo de teste no terminal comum.
 
+### 4. Conflito ao conectar o repositório ao GitHub
+
+- **Sintoma:** `git status` mostrou um merge em andamento, com conflito do tipo
+  "both added" em `.gitignore` e `README.md`.
+- **Causa provável:** o repositório do GitHub foi criado com `README.md` e `.gitignore`
+  próprios; ao juntar com o histórico local, os dois lados tinham versões diferentes dos
+  mesmos arquivos.
+- **Solução:** conflito resolvido pelo desenvolvedor. Na resolução, as regras do Impeccable
+  saíram do `.gitignore`, e `.impeccable/critique/` e `.impeccable/design.json` voltaram a
+  aparecer como não rastreados. As regras foram restauradas (commit `4cb682c`), e
+  `git ls-files` confirmou que nenhum arquivo local do Impeccable tinha sido versionado.
+
+### 5. Versão de patch do React Native
+
+- **Sintoma:** `npx expo-doctor` passou de 20/20 para 19/20: esperado `react-native`
+  0.88.1, instalado 0.88.0.
+- **Causa:** uma versão de correção foi publicada depois da criação do projeto. Não tinha
+  relação com o código do app.
+- **Solução:** `npx expo install react-native`, num commit separado. A diferença no
+  `package-lock.json` ficou restrita à família do `react-native` (relatório
+  `docs/avaliacoes/testes-etapa2-ajustes.md`). `expo-doctor` voltou a 20/20.
+
 **Lição:** trabalhar sempre em terminal e editor **sem** privilégios de administrador; o uso
 de janela elevada escondeu o problema de permissões até a chegada do Claude Code.
 
@@ -179,6 +218,10 @@ de janela elevada escondeu o problema de permissões até a chegada do Claude Co
 | `PRODUCT.md` | Usuários, propósito, posicionamento, princípios, acessibilidade, evidências | Corrigido antes do commit (causa da procrastinação, check-in, disciplina, referências) |
 | `DESIGN.md` | North Star "O Primeiro Passo", tokens, regras, componentes, 14 inconsistências | Corrigido antes do commit (item 13, regra de variantes, grade não testada) |
 | `docs/avaliacoes/critique-tela-hoje.md` | Avaliação heurística da tela Hoje: 21/32 (Aceitável), 1 P1 e 4 P2 | Base da Etapa 1.1 |
+| `docs/avaliacoes/auditoria-acessibilidade-etapa2.md` | Auditoria de acessibilidade do código (sem aparelho): 17 OK, 4 problemas, 5 não verificáveis | Base das correções da Etapa 2d |
+| `docs/avaliacoes/testes-etapa2d.md` | Testes sem aparelho da 2d: escopo, `expo-doctor`, compilação Android, 61 testes de lógica e revisão de código | 2 falhas, corrigidas nos ajustes finais |
+| `docs/avaliacoes/testes-jest.md` | Testes sem aparelho da configuração do Jest: 56 testes, detecção de erro, cobertura, bundle sem testes | 2 falhas (pacotes duplicados em `dependencies` e `DESIGN.md` desatualizado), corrigidas no commit seguinte |
+| `docs/avaliacoes/testes-etapa2-ajustes.md` | Testes sem aparelho dos ajustes finais: `expo-doctor` 20/20, compilação, 74 testes de lógica | 1 falha de documentação (DESIGN.md), tratada na atualização do DESIGN.md |
 
 **Ressalva metodológica:** a nota 21/32 e as personas do relatório de crítica vêm de uma
 avaliação heurística (Nielsen) feita por ferramenta a partir do código. Não é teste com
@@ -262,11 +305,125 @@ telas), vídeo de 17:23 (fonte máxima) e prints de 17:35, 17:39 e 17:40 (rótul
   à regra "fonte sem limite" do `DESIGN.md`, justificada pela altura fixa da barra. O
   conteúdo das telas continua crescendo sem limite.
 
+## Forma de trabalho a partir da Etapa 2
+
+A cada parte, o desenvolvimento segue o ciclo:
+
+1. Planejamento aprovado pelo desenvolvedor.
+2. Implementação, com verificação de imports e testes de lógica feitos pelo orientador.
+3. **Testes sem aparelho pelo Claude Code**, a partir de um prompt: escopo das mudanças
+   (`git status`/`git diff`), `npm test` (testes automáticos do projeto, desde a parte de
+   testes com Jest), `npx expo-doctor`, compilação Android (`npx expo export`) e revisão de
+   código. O resultado vira um relatório
+   em `docs/avaliacoes/`. Esses testes **nunca** contam como "testado no aparelho".
+4. **Testes manuais no aparelho**, só com o que exige o celular (tela, toque, TalkBack,
+   persistência depois de fechar o app).
+5. Commit e `git push`.
+
+## Etapa 2 — Tarefas reais, salvas no aparelho
+
+Status: **concluída e testada no aparelho**
+
+### Decisões aprovadas no planejamento
+
+| # | Decisão | Escolha |
+|---|---|---|
+| 1 | Dados de demonstração | Removidos das telas; botão "Carregar exemplos" visível só em `__DEV__` |
+| 2 | Exclusão | Confirmação com aviso nativo; "Desfazer" com snackbar fica para depois |
+| 3 | "Para hoje" | Chave no formulário, desligada por padrão |
+| 4 | Passos | Fora da Etapa 2; até a Etapa 3, o card mostra "Defina um primeiro passo" para tarefas sem passos |
+| 5 | Testes automáticos (Jest) | Numa parte separada, depois da Etapa 2 |
+| 6 | Cor de erro | `#A8322B` (6,14:1 sobre o fundo; 6,65:1 sobre branco) |
+
+### Partes
+
+| Parte | Conteúdo | Teste no aparelho |
+|---|---|---|
+| **2a** | AsyncStorage 2.2.0; `taskStorage` (envelope `{ schemaVersion: 1, tasks }`); `tasksReducer` (funções puras); `TasksContext` com `useTasks()`; carregamento real com atraso de 300 ms; erro de leitura com "Tentar de novo"; exemplos reais; remoção de `DemoBadge` e `src/data/demo.js`; resumo da semana como estado vazio até existirem sessões | ✅ Relato: estados vazios, exemplos, persistência depois de recarregar e de fechar o Expo Go |
+| **2b** | Rota `/tarefa/formulario` (modal); `TaskForm`; `TextField` (rótulo, contador, erro); `validation.js`; token `error`; "Salvar" no cabeçalho para continuar visível com o teclado | ✅ Relato: validação, criação, "Para hoje", cancelar, persistência e teclado |
+| **2c** | `Checkbox` acessível (48 dp); linha da tarefa com duas áreas de toque (concluir / editar); edição pela mesma rota (`?id=`); exclusão com confirmação; variante de botão `danger`; ícone de lixeira | ✅ Relato |
+| **2d** | Card da tela Hoje com três situações sem passo (sem tarefas, todas concluídas, pendentes sem passos); correções da auditoria de acessibilidade (itens 4, 6b, 7g, 9b, 9c) | ✅ Relato, incluindo o TalkBack |
+| **Ajustes finais** | Dica falada sem pontuação dupla; `pressedFeedback` na linha "Para hoje"; remoção dos tokens de demonstração; `react-native` 0.88.1 | Testes sem aparelho: 74/74 e `expo-doctor` 20/20. Abertura do app depois da atualização: a confirmar |
+
+### Acessibilidade
+
+- **Teste manual com TalkBack:** feito em 29/10/2026 (relato do desenvolvedor), cobrindo a
+  tela Hoje, a aba Tarefas e o formulário. Encerra a pendência aberta desde a Etapa 1.
+- **Auditoria do código** (Claude Code, sem aparelho): 4 problemas encontrados e corrigidos
+  na 2d (leituras duplas no formulário, linha "Para hoje" com três leituras e área de toque
+  só na chave, ordem da fala diferente da ordem visual).
+- **Itens que só o aparelho resolveria** (anúncios duplicados ao marcar e ao mostrar erro,
+  perda de foco ao concluir na aba Tarefas): não apareceram como problema no teste manual.
+- **Não verificados:** pronúncia de "Pendentes (2)" e anúncio do aviso de carregamento.
+  Sem `adb`, a árvore de acessibilidade real (`uiautomator dump`) não foi conferida.
+
+### Problemas conhecidos / limitações
+
+- Os passos ainda não podem ser criados pela interface (Etapa 3). Só os exemplos têm passos.
+- "Começar 5 minutos" continua mostrando um aviso (temporizador na Etapa 4).
+- O resumo da semana e a aba Progresso mostram estado vazio até existirem sessões de foco.
+- Não há "Desfazer" depois de excluir uma tarefa.
+- Se os dados salvos estiverem corrompidos, a tela de erro só oferece "Tentar de novo";
+  apagar todos os dados (RF17) virá com a tela de Ajustes.
+- Para voltar ao estado vazio, é preciso excluir todas as tarefas (ou limpar os dados do
+  Expo Go, o que afeta todos os projetos abertos nele).
+
+## Testes automáticos com Jest
+
+Status: **concluída**. Testes automáticos executados (`npm test`); app testado no aparelho
+depois da mudança (relato do desenvolvedor, 29/10/2026).
+
+### Decisões
+
+| # | Decisão | Escolha |
+|---|---|---|
+| 1 | Escopo | Só testes de lógica (funções puras). Testes de componentes com a React Native Testing Library ficam para a Etapa 3 |
+| 2 | `@types/jest` | Incluído, para o VS Code completar e explicar `describe`, `test` e `expect` |
+| 3 | Reorganizações para permitir testes | `getEmptyHeroContent` saiu de `src/app/(tabs)/index.js` para `src/features/tasks/heroContent.js`; a dica falada virou `buildSpokenHint`, em `src/utils/accessibility.js` |
+| 4 | Inconsistências do `DESIGN.md` | #16 (comentários do tema) e #18 (altura do campo de várias linhas, agora token `multilineFieldMinHeight`) resolvidas; #17 (texto do `TextInput` fora do `AppText`) aceita como exceção registrada; #15 (componentes do template) fica para a limpeza planejada |
+
+### Como os testes estão organizados
+
+- Ficam em pastas `__tests__`, ao lado do código testado: `src/features/tasks/__tests__`,
+  `src/services/storage/__tests__` e `src/utils/__tests__`.
+- **Nunca dentro de `src/app/`:** o Expo Router transforma todo arquivo dessa pasta em rota.
+- O teste do armazenamento usa uma simulação do AsyncStorage em memória, escrita no próprio
+  arquivo de teste, sem depender do aparelho.
+- A cobertura (`npm run test:coverage`) considera todos os arquivos `.js` de `src/`, inclusive
+  telas e componentes. Assim, o relatório mostra com honestidade o que **não** é coberto pelo
+  Jest: telas e componentes continuam sendo testados no aparelho.
+
+### Resultados
+
+- 57 testes em 10 suítes (56 da configuração inicial + 1 para o ramo sem cobertura de
+  `buildSpokenHint`), todos passando.
+- Cobertura: os 10 módulos de lógica (`src/features/tasks`, `src/services/storage` e
+  `src/utils`) têm 100% de instruções, ramos, funções e linhas. Considerando todo o `src/`,
+  a cobertura é de 29% das linhas, porque 25 arquivos de telas, componentes e contexto
+  aparecem com 0%: eles são verificados no aparelho e pela auditoria de acessibilidade, não
+  pelo Jest.
+- Prova de que os testes detectam erros: uma mudança proposital no texto "Nada pendente por
+  agora" fez exatamente 1 teste falhar, apontando a diferença.
+- Nenhum arquivo de teste nem pacote do Jest entra no app compilado (conferido pelo mapa de
+  fontes do bundle Android).
+- As funções movidas se comportam como antes (488 casos comparados com o commit anterior).
+
+### Problema encontrado e corrigido no commit seguinte
+
+- **Pacotes do Jest duplicados** (presentes no commit `6c2be5b`): `jest`, `jest-expo` e `@types/jest` ficaram registrados em
+  `dependencies` e em `devDependencies`. Causa provável: a primeira tentativa de instalação
+  registrou os pacotes como dependências do app, e a forma alternativa registrou de novo
+  como dependências de desenvolvimento. Correção: remoção de `dependencies` com
+  `npm pkg delete` e `npm install` para atualizar o `package-lock.json`. O app não foi
+  afetado: o Metro só empacota o que é importado, e nenhum teste entra no bundle.
+- **No mesmo commit:** `collectCoverageFrom` passou a considerar todo o `src/`, e entrou um
+  teste para o ramo sem cobertura de `buildSpokenHint` (57 testes no total).
+- **`DESIGN.md`:** #16 e #18 marcadas como resolvidas, #17 como exceção aceita (🟰) e a
+  exceção registrada na "Variant-Only Rule".
+
 ## Próximos passos
 
-1. Atualizar o `DESIGN.md` com as mudanças da Etapa 1.1, a exceção do rótulo das abas e as
-   inconsistências resolvidas.
-2. (Opcional) Rodar `/impeccable critique` de novo na tela Hoje e comparar com os 21/32.
-3. Etapa 2: tarefas reais (criar, editar, concluir, excluir) com persistência local
-   (AsyncStorage), estados de carregamento reais e caixa de seleção de verdade nas tarefas.
-4. Teste com TalkBack (adiado da Etapa 1.1), junto com a Etapa 2.
+1. Etapa 3: passos dentro das tarefas, com a tela de detalhe da tarefa e os primeiros
+   testes de componentes (React Native Testing Library).
+2. Limpeza dos arquivos do template (`src/components/*.tsx`, `src/hooks`,
+   `src/constants/theme.ts`), numa parte própria, com teste.
