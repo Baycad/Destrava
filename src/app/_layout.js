@@ -1,6 +1,7 @@
 import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
+import { TasksProvider } from '../features/tasks/TasksContext';
 import { colors } from '../theme';
 
 // Tema da navegação baseado nas cores do Destrava.
@@ -19,17 +20,19 @@ const navigationTheme = {
 
 /**
  * Layout raiz (Expo Router).
- * Uma pilha (Stack) que, por enquanto, contém apenas o grupo de abas.
- * Nas próximas etapas, telas como "Foco" e "Detalhe da tarefa" entram
- * nesta pilha, abrindo por cima das abas.
+ * - TasksProvider: deixa as tarefas (salvas no aparelho) disponíveis em todas as telas.
+ * - Stack: por enquanto contém apenas o grupo de abas; telas como o formulário
+ *   de tarefa entram aqui, abrindo por cima das abas.
  */
 export default function RootLayout() {
   return (
-    <ThemeProvider value={navigationTheme}>
-      <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" />
-      </Stack>
-    </ThemeProvider>
+    <TasksProvider>
+      <ThemeProvider value={navigationTheme}>
+        <StatusBar style="dark" />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" />
+        </Stack>
+      </ThemeProvider>
+    </TasksProvider>
   );
 }

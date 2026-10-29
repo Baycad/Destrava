@@ -2,13 +2,12 @@ import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '../../components/AppText';
 import { Card } from '../../components/Card';
-import { DemoBadge } from '../../components/DemoBadge';
 import { EmptyState } from '../../components/EmptyState';
 import { Screen } from '../../components/Screen';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { SectionHeader } from '../../components/SectionHeader';
 import { StatTile } from '../../components/StatTile';
-import { SHOW_DEMO_DATA, getWeekSummary } from '../../data/demo';
+import { getWeekSummary } from '../../features/progress/weekSummary';
 import { colors, spacing } from '../../theme';
 
 /** Linha "resultado da sessão + quantidade" (usada só nesta tela). */
@@ -35,8 +34,6 @@ export default function ProgressScreen() {
         title="Progresso"
         subtitle="Um retrato da sua semana, para você se observar, não para se cobrar."
       />
-
-      {SHOW_DEMO_DATA ? <DemoBadge /> : null}
 
       {summary ? (
         <>

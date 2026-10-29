@@ -4,12 +4,13 @@ import { Alert, StyleSheet } from 'react-native';
 import { AppText } from '../../components/AppText';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
-import { DemoBadge } from '../../components/DemoBadge';
 import { EmptyState } from '../../components/EmptyState';
 import { Screen } from '../../components/Screen';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { SectionHeader } from '../../components/SectionHeader';
-import { SHOW_DEMO_DATA, getTasks, getWeekSummary } from '../../data/demo';
+import { getWeekSummary } from '../../features/progress/weekSummary';
+import { useTasks } from '../../features/tasks/TasksContext';
+import { TasksStatusView } from '../../features/tasks/TasksStatusView';
 import { TaskList } from '../../features/tasks/TaskList';
 import { getNextStep, getTodayTasks } from '../../features/tasks/selectors';
 import { colors, spacing } from '../../theme';
@@ -25,7 +26,7 @@ export default function TodayScreen() {
   const router = useRouter();
   const now = new Date();
 
-  const tasks = getTasks();
+  const { status, tasks } = useTasks();
   const nextStep = getNextStep(tasks);
   const todayTasks = getTodayTasks(tasks);
   const summary = getWeekSummary();
@@ -46,12 +47,22 @@ export default function TodayScreen() {
     router.navigate('/progresso');
   }
 
+  const header = <ScreenHeader title={`${getGreeting(now)}!`} subtitle={formatLongDate(now)} />;
+
+  // Enquanto as tarefas são lidas do aparelho (ou se a leitura falhar).
+  if (status !== 'ready') {
+    return (
+      <Screen>
+        {header}
+        <TasksStatusView />
+      </Screen>
+    );
+  }
+
   return (
     <Screen>
       {/* 1. Saudação e apresentação do dia */}
-      <ScreenHeader title={`${getGreeting(now)}!`} subtitle={formatLongDate(now)} />
-
-      {SHOW_DEMO_DATA ? <DemoBadge /> : null}
+      {header}
 
       {/* 2. Pergunta central: voz do produto, abaixo do passo na hierarquia */}
       <AppText variant="heading">Qual é a menor coisa que você pode começar agora?</AppText>
