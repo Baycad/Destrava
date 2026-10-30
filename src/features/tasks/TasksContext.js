@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 
 import { readTasks, writeTasks } from '../../services/storage/taskStorage';
 import { buildExampleTasks } from './exampleTasks';
-import { createTask, normalizeFields } from './taskModel';
+import { createStep, createTask, normalizeFields } from './taskModel';
 import { initialTasksState, tasksReducer } from './tasksReducer';
 
 const TasksContext = createContext(null);
@@ -59,12 +59,29 @@ export function TasksProvider({ children }) {
     status: state.status,
     tasks: state.tasks,
     reload: loadTasks,
-    addTask: (fields) => dispatch({ type: 'task/added', task: createTask(fields, now()) }),
+    // Devolve o id da tarefa criada (usado para abrir o detalhe logo depois).
+    addTask: (fields) => {
+      const task = createTask(fields, now());
+      dispatch({ type: 'task/added', task });
+      return task.id;
+    },
     updateTask: (id, fields) =>
       dispatch({ type: 'task/updated', id, changes: normalizeFields(fields), now: now() }),
     toggleTask: (id) => dispatch({ type: 'task/toggled', id, now: now() }),
     deleteTask: (id) => dispatch({ type: 'task/deleted', id }),
     loadExamples: () => dispatch({ type: 'tasks/replaced', tasks: buildExampleTasks(now()) }),
+
+    // Passos (Etapa 3)
+    addStep: (taskId, title) => {
+      const time = now();
+      dispatch({ type: 'step/added', taskId, step: createStep(title, time), now: time });
+    },
+    updateStep: (taskId, stepId, title) =>
+      dispatch({ type: 'step/updated', taskId, stepId, changes: { title: title.trim() }, now: now() }),
+    toggleStep: (taskId, stepId) => dispatch({ type: 'step/toggled', taskId, stepId, now: now() }),
+    deleteStep: (taskId, stepId) => dispatch({ type: 'step/deleted', taskId, stepId, now: now() }),
+    moveStep: (taskId, stepId, direction) =>
+      dispatch({ type: 'step/moved', taskId, stepId, direction, now: now() }),
   };
 
   return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>;

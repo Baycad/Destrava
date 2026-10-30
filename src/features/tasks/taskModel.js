@@ -36,3 +36,18 @@ export function createTask(fields, now, id = generateId()) {
     completedAt: null,
   };
 }
+
+/**
+ * Monta um passo novo.
+ * - title: texto do passo (espaços das pontas são retirados)
+ * - now: data/hora atual em texto ISO
+ */
+export function createStep(title, now, id = generateId()) {
+  return {
+    id,
+    title: title.trim(),
+    done: false,
+    createdAt: now,
+    completedAt: null,
+  };
+}

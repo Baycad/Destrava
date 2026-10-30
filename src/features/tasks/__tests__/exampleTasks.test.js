@@ -25,6 +25,11 @@ describe('buildExampleTasks', () => {
     expect(next.total).toBe(3);
   });
 
+  test('passos têm data de criação; os já feitos ficam com conclusão desconhecida', () => {
+    const steps = buildExampleTasks(NOW).flatMap((t) => t.steps);
+    expect(steps.every((s) => s.createdAt === NOW && s.completedAt === null)).toBe(true);
+  });
+
   test('3 tarefas para hoje, com a concluída por último', () => {
     const today = getTodayTasks(buildExampleTasks(NOW));
     expect(today).toHaveLength(3);

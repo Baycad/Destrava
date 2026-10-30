@@ -1,4 +1,4 @@
-import { createTask, generateId, normalizeFields } from '../taskModel';
+import { createStep, createTask, generateId, normalizeFields } from '../taskModel';
 
 describe('normalizeFields', () => {
   test('tira espaços das pontas do título e da observação', () => {
@@ -44,5 +44,17 @@ describe('createTask', () => {
   test('generateId devolve um texto não vazio', () => {
     expect(typeof generateId()).toBe('string');
     expect(generateId().length).toBeGreaterThan(0);
+  });
+});
+
+describe('createStep', () => {
+  test('monta um passo novo, sem espaços nas pontas e ainda não feito', () => {
+    expect(createStep('  Ler a primeira página  ', 'agora', 'p1')).toEqual({
+      id: 'p1',
+      title: 'Ler a primeira página',
+      done: false,
+      createdAt: 'agora',
+      completedAt: null,
+    });
   });
 });

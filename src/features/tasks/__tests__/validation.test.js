@@ -1,7 +1,9 @@
 import {
   NOTES_MAX_LENGTH,
+  STEP_MAX_LENGTH,
   TITLE_MAX_LENGTH,
   hasErrors,
+  validateStepTitle,
   validateTaskFields,
 } from '../validation';
 
@@ -42,5 +44,25 @@ describe('hasErrors', () => {
   test('identifica quando há ou não há erros', () => {
     expect(hasErrors({})).toBe(false);
     expect(hasErrors({ title: 'Escreva um título para a tarefa.' })).toBe(true);
+  });
+});
+
+describe('validateStepTitle', () => {
+  test('limite de 120 caracteres', () => {
+    expect(STEP_MAX_LENGTH).toBe(120);
+  });
+
+  test('passo vazio ou só com espaços pede para escrever o passo', () => {
+    expect(validateStepTitle('')).toBe('Escreva o passo.');
+    expect(validateStepTitle('   ')).toBe('Escreva o passo.');
+  });
+
+  test('120 caracteres é válido; 121, não', () => {
+    expect(validateStepTitle('a'.repeat(120))).toBeUndefined();
+    expect(validateStepTitle('a'.repeat(121))).toBe('Use até 120 caracteres no passo.');
+  });
+
+  test('passo comum é válido', () => {
+    expect(validateStepTitle('Abrir o enunciado')).toBeUndefined();
   });
 });

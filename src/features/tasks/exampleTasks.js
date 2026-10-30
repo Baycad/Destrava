@@ -7,7 +7,15 @@ import { generateId } from './taskModel';
 
 /** Monta os exemplos com ids e datas novos a cada carregamento. */
 export function buildExampleTasks(now) {
-  const step = (title, done = false) => ({ id: generateId(), title, done });
+  // Passos de exemplo: criados agora; os já feitos ficam com data de conclusão
+  // desconhecida (null), para não contarem como "feitos nesta semana" no futuro resumo.
+  const step = (title, done = false) => ({
+    id: generateId(),
+    title,
+    done,
+    createdAt: now,
+    completedAt: null,
+  });
 
   const task = (fields) => ({
     id: generateId(),

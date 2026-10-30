@@ -38,7 +38,48 @@ describe('taskStorage', () => {
     await writeTasks(tasks);
 
     await expect(readTasks()).resolves.toEqual(tasks);
-    expect(JSON.parse(await AsyncStorage.getItem(KEY)).schemaVersion).toBe(1);
+    expect(JSON.parse(await AsyncStorage.getItem(KEY)).schemaVersion).toBe(2);
+  });
+
+  test('migra dados da versão 1: passos ganham datas desconhecidas (null)', async () => {
+    const v1 = {
+      schemaVersion: 1,
+      tasks: [
+        {
+          id: 'a',
+          title: 'A',
+          status: 'pending',
+          steps: [
+            { id: 's1', title: 'Feito antes', done: true },
+            { id: 's2', title: 'Em aberto', done: false },
+          ],
+        },
+        { id: 'b', title: 'Sem passos', status: 'pending', steps: [] },
+      ],
+    };
+    await AsyncStorage.setItem(KEY, JSON.stringify(v1));
+
+    const tasks = await readTasks();
+    expect(tasks[0].steps).toEqual([
+      { id: 's1', title: 'Feito antes', done: true, createdAt: null, completedAt: null },
+      { id: 's2', title: 'Em aberto', done: false, createdAt: null, completedAt: null },
+    ]);
+    expect(tasks[1].steps).toEqual([]);
+    expect(tasks[0].title).toBe('A');
+  });
+
+  test('migração de tarefa da versão 1 sem a lista de passos: vira lista vazia', async () => {
+    await AsyncStorage.setItem(KEY, JSON.stringify({ schemaVersion: 1, tasks: [{ id: 'a', title: 'A' }] }));
+    expect((await readTasks())[0].steps).toEqual([]);
+  });
+
+  test('migração preserva datas que já existam', async () => {
+    const v1 = {
+      schemaVersion: 1,
+      tasks: [{ id: 'a', title: 'A', steps: [{ id: 's', title: 'x', done: true, completedAt: 'T' }] }],
+    };
+    await AsyncStorage.setItem(KEY, JSON.stringify(v1));
+    expect((await readTasks())[0].steps[0].completedAt).toBe('T');
   });
 
   test('dados corrompidos geram erro (a tela mostra "Tentar de novo")', async () => {

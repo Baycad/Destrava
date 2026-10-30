@@ -3,6 +3,7 @@
 
 export const TITLE_MAX_LENGTH = 100;
 export const NOTES_MAX_LENGTH = 500;
+export const STEP_MAX_LENGTH = 120;
 
 /**
  * Valida os campos do formulário.
@@ -28,4 +29,19 @@ export function validateTaskFields({ title, notes = '' }) {
 /** true quando o objeto de erros tem pelo menos uma mensagem. */
 export function hasErrors(errors) {
   return Object.keys(errors).length > 0;
+}
+
+/**
+ * Valida o texto de um passo.
+ * Devolve a mensagem de erro, ou undefined quando está tudo certo.
+ */
+export function validateStepTitle(title) {
+  const trimmed = title.trim();
+  if (trimmed.length === 0) {
+    return 'Escreva o passo.';
+  }
+  if (trimmed.length > STEP_MAX_LENGTH) {
+    return `Use até ${STEP_MAX_LENGTH} caracteres no passo.`;
+  }
+  return undefined;
 }

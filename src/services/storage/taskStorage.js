@@ -6,20 +6,42 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STORAGE_KEY = '@destrava/tasks';
 
-// Versão do formato salvo. Quando o modelo mudar (ex.: Etapa 3), aumentamos
-// este número e escrevemos uma migração em migrate().
-const CURRENT_SCHEMA_VERSION = 1;
+// Versão do formato salvo. Quando o modelo muda, este número aumenta e uma
+// migração converte os dados antigos em migrate().
+// - Versão 1 (Etapa 2): passo = { id, title, done }
+// - Versão 2 (Etapa 3): passo ganha createdAt e completedAt
+const CURRENT_SCHEMA_VERSION = 2;
 
 /**
- * Converte o que estava salvo para o formato atual.
+ * Versão 1 -> 2: acrescenta as datas dos passos.
+ * Para passos antigos a data é desconhecida, então fica null: não inventamos datas
+ * (princípio "Honestidade" do PRODUCT.md).
+ */
+function migrateV1toV2(tasks) {
+  return tasks.map((task) => ({
+    ...task,
+    steps: (task.steps ?? []).map((step) => ({ createdAt: null, completedAt: null, ...step })),
+  }));
+}
+
+/**
+ * Converte o que estava salvo para o formato atual, uma versão por vez.
  * Lança erro se os dados estiverem num formato desconhecido.
  */
 function migrate(data) {
   if (!data || typeof data !== 'object' || !Array.isArray(data.tasks)) {
     throw new Error('Formato de dados inválido');
   }
-  if (data.schemaVersion === CURRENT_SCHEMA_VERSION) {
-    return data.tasks;
+
+  let { schemaVersion, tasks } = data;
+
+  if (schemaVersion === 1) {
+    tasks = migrateV1toV2(tasks);
+    schemaVersion = 2;
+  }
+
+  if (schemaVersion === CURRENT_SCHEMA_VERSION) {
+    return tasks;
   }
   throw new Error(`Versão de dados desconhecida: ${data.schemaVersion}`);
 }

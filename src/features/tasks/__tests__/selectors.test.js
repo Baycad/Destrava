@@ -1,7 +1,10 @@
 import {
+  areAllStepsDone,
   countSteps,
   getFirstPendingStep,
   getNextStep,
+  getNextStepOfTask,
+  getTaskById,
   getTodayTasks,
   splitByStatus,
 } from '../selectors';
@@ -61,5 +64,27 @@ describe('splitByStatus, countSteps e getFirstPendingStep', () => {
   test('encontra o primeiro passo pendente', () => {
     expect(getFirstPendingStep(task('a', { steps: [step('1', true), step('2')] })).title).toBe('2');
     expect(getFirstPendingStep(task('b'))).toBeNull();
+  });
+});
+
+describe('seletores da tela de detalhe (Etapa 3)', () => {
+  test('getTaskById encontra a tarefa ou devolve null', () => {
+    const tasks = [task('a'), task('b')];
+    expect(getTaskById(tasks, 'b').id).toBe('b');
+    expect(getTaskById(tasks, 'x')).toBeNull();
+  });
+
+  test('getNextStepOfTask: primeiro passo em aberto da tarefa, mesmo se ela estiver concluída', () => {
+    const result = getNextStepOfTask(task('a', { status: 'done', steps: [step('1', true), step('2')] }));
+    expect(result.step.title).toBe('2');
+    expect(result.position).toBe(2);
+    expect(getNextStepOfTask(task('b', { steps: [step('1', true)] }))).toBeNull();
+    expect(getNextStepOfTask(task('c'))).toBeNull();
+  });
+
+  test('areAllStepsDone: só quando há passos e todos estão feitos', () => {
+    expect(areAllStepsDone(task('a', { steps: [step('1', true), step('2', true)] }))).toBe(true);
+    expect(areAllStepsDone(task('b', { steps: [step('1', true), step('2')] }))).toBe(false);
+    expect(areAllStepsDone(task('c'))).toBe(false);
   });
 });

@@ -14,8 +14,30 @@ export function getFirstPendingStep(task) {
   return task.steps.find((step) => !step.done) ?? null;
 }
 
+/** Procura uma tarefa pelo id (ou null). */
+export function getTaskById(tasks, id) {
+  return tasks.find((task) => task.id === id) ?? null;
+}
+
 /**
- * Escolhe o passo exibido no card "Seu próximo passo".
+ * Próximo passo de UMA tarefa: o primeiro ainda não feito, com posição e total.
+ * Devolve null se a tarefa não tiver passo em aberto.
+ */
+export function getNextStepOfTask(task) {
+  const index = task.steps.findIndex((step) => !step.done);
+  if (index === -1) {
+    return null;
+  }
+  return { task, step: task.steps[index], position: index + 1, total: task.steps.length };
+}
+
+/** true quando a tarefa tem passos e todos estão feitos. */
+export function areAllStepsDone(task) {
+  return task.steps.length > 0 && task.steps.every((step) => step.done);
+}
+
+/**
+ * Escolhe o passo exibido no card "Seu próximo passo" da tela Hoje.
  * Regra provisória (decisão pendente nº 6 do planejamento):
  * primeira tarefa pendente marcada para hoje que tenha um passo em aberto;
  * se não houver, a primeira tarefa pendente com passo em aberto.
@@ -25,18 +47,7 @@ export function getNextStep(tasks) {
     (task) => task.status === 'pending' && getFirstPendingStep(task) !== null
   );
   const task = candidates.find((candidate) => candidate.forToday) ?? candidates[0];
-
-  if (!task) {
-    return null;
-  }
-
-  const index = task.steps.findIndex((step) => !step.done);
-  return {
-    task,
-    step: task.steps[index],
-    position: index + 1,
-    total: task.steps.length,
-  };
+  return task ? getNextStepOfTask(task) : null;
 }
 
 /** Tarefas marcadas para hoje, com as pendentes primeiro. */
