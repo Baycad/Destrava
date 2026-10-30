@@ -1,26 +1,31 @@
 import { useRouter } from 'expo-router';
-import { Alert, StyleSheet } from 'react-native';
 
 import { AppText } from '../../components/AppText';
-import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { EmptyState } from '../../components/EmptyState';
 import { Screen } from '../../components/Screen';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { SectionHeader } from '../../components/SectionHeader';
 import { getWeekSummary } from '../../features/progress/weekSummary';
+import { HeroMessageCard, NextStepCard } from '../../features/tasks/HeroCards';
 import { useTasks } from '../../features/tasks/TasksContext';
 import { TasksStatusView } from '../../features/tasks/TasksStatusView';
 import { TaskList } from '../../features/tasks/TaskList';
 import { getEmptyHeroContent } from '../../features/tasks/heroContent';
 import { getNextStep, getTodayTasks } from '../../features/tasks/selectors';
-import { colors, spacing } from '../../theme';
+import { colors } from '../../theme';
 import { formatLongDate, getGreeting } from '../../utils/date';
 import { pluralize } from '../../utils/format';
 
+// Ícone e dica falada de cada ação do card sem passo.
+const EMPTY_HERO_ACTIONS = {
+  new: { icon: 'add', hint: 'Abre o formulário de nova tarefa' },
+  task: { icon: 'tasks', hint: 'Abre os detalhes da tarefa para escrever o passo' },
+};
+
 /**
  * Aba "Hoje": a tela inicial do Destrava.
- * Hierarquia (Etapa 1.1): o passo dentro do card é o maior texto da tela;
+ * Hierarquia: o passo dentro do card é o maior texto da tela;
  * a pergunta central fica acima do card, em tamanho menor.
  */
 export default function TodayScreen() {
@@ -33,24 +38,20 @@ export default function TodayScreen() {
   const emptyHero = getEmptyHeroContent(tasks);
   const summary = getWeekSummary();
 
-  function handleStartFocus() {
-    // O temporizador de foco será construído numa próxima etapa.
-    Alert.alert(
-      'Modo foco em construção',
-      'Nesta etapa, o botão é apenas visual. O temporizador de foco chega numa próxima etapa.'
-    );
-  }
-
   function goToTasks() {
     router.navigate('/tarefas');
   }
 
-  function goToNewTask() {
-    router.push('/tarefa/formulario');
-  }
-
   function goToProgress() {
     router.navigate('/progresso');
+  }
+
+  function handleEmptyHeroAction() {
+    if (emptyHero.action === 'task') {
+      router.push({ pathname: '/tarefa/[id]', params: { id: emptyHero.taskId } });
+    } else {
+      router.push('/tarefa/formulario');
+    }
   }
 
   const header = <ScreenHeader title={`${getGreeting(now)}!`} subtitle={formatLongDate(now)} />;
@@ -74,54 +75,18 @@ export default function TodayScreen() {
       <AppText variant="heading">Qual é a menor coisa que você pode começar agora?</AppText>
 
       {/* 3 e 4. Card de destaque com o botão principal */}
-      <Card variant="hero">
-        <AppText variant="label" color={colors.onHeroSecondary} accessibilityRole="header">
-          Seu próximo passo
-        </AppText>
-
-        {nextStep ? (
-          <>
-            <AppText variant="display" color={colors.onHero}>
-              {nextStep.step.title}
-            </AppText>
-            <AppText variant="caption" color={colors.onHeroSecondary}>
-              Passo {nextStep.position} de {nextStep.total} em {nextStep.task.title}
-            </AppText>
-            <Button
-              label="Começar 5 minutos"
-              icon="play"
-              variant="hero"
-              onPress={handleStartFocus}
-              accessibilityHint="Em construção: por enquanto, mostra um aviso"
-              style={styles.heroButton}
-            />
-            <AppText variant="caption" color={colors.onHeroSecondary}>
-              Cinco minutos já valem. Se quiser parar depois, tudo bem.
-            </AppText>
-          </>
-        ) : (
-          <>
-            <AppText variant="display" color={colors.onHero}>
-              {emptyHero.title}
-            </AppText>
-            <AppText variant="body" color={colors.onHeroSecondary}>
-              {emptyHero.message}
-            </AppText>
-            <Button
-              label={emptyHero.actionLabel}
-              icon={emptyHero.action === 'tasks' ? 'tasks' : 'add'}
-              variant="hero"
-              onPress={emptyHero.action === 'tasks' ? goToTasks : goToNewTask}
-              accessibilityHint={
-                emptyHero.action === 'tasks'
-                  ? 'Abre a aba Tarefas'
-                  : 'Abre o formulário de nova tarefa'
-              }
-              style={styles.heroButton}
-            />
-          </>
-        )}
-      </Card>
+      {nextStep ? (
+        <NextStepCard nextStep={nextStep} showTaskName />
+      ) : (
+        <HeroMessageCard
+          title={emptyHero.title}
+          message={emptyHero.message}
+          actionLabel={emptyHero.actionLabel}
+          actionIcon={EMPTY_HERO_ACTIONS[emptyHero.action].icon}
+          actionHint={EMPTY_HERO_ACTIONS[emptyHero.action].hint}
+          onAction={handleEmptyHeroAction}
+        />
+      )}
 
       {/* 5. Tarefas do dia (sem repetir o passo que já está no card) */}
       <SectionHeader
@@ -174,10 +139,3 @@ export default function TodayScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  heroButton: {
-    alignSelf: 'flex-start',
-    marginTop: spacing.sm,
-  },
-});

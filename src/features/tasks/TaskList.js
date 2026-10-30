@@ -7,7 +7,7 @@ import { TaskItem } from './TaskItem';
 
 /**
  * Lista de tarefas agrupada em um único painel, com divisórias entre os itens.
- * Cada linha pode ser concluída/reaberta (caixa de seleção) ou aberta para edição.
+ * Cada linha pode ser concluída/reaberta (caixa de seleção) ou aberta para ver os detalhes.
  * - highlightedTaskId: id da tarefa cujo próximo passo já está no card de destaque
  *   (usado na tela Hoje para não repetir o mesmo passo).
  */
@@ -23,7 +23,7 @@ export function TaskList({ tasks, highlightedTaskId = null }) {
   }
 
   function handleOpen(id) {
-    router.push({ pathname: '/tarefa/formulario', params: { id } });
+    router.push({ pathname: '/tarefa/[id]', params: { id } });
   }
 
   return (

@@ -32,6 +32,9 @@ export function TextField({
   multiline = false,
   autoFocus = false,
   returnKeyType,
+  onSubmitEditing,
+  submitBehavior,
+  inputRef,
 }) {
   const [focused, setFocused] = useState(false);
 
@@ -63,12 +66,15 @@ export function TextField({
       </View>
 
       <TextInput
+        ref={inputRef}
         value={value}
         onChangeText={onChangeText}
         maxLength={maxLength}
         multiline={multiline}
         autoFocus={autoFocus}
         returnKeyType={returnKeyType}
+        onSubmitEditing={onSubmitEditing}
+        submitBehavior={submitBehavior}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         accessibilityLabel={label}

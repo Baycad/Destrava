@@ -31,6 +31,18 @@ export default function RootLayout() {
         <StatusBar style="dark" />
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" />
+          {/* Detalhe da tarefa: abre por cima, com o cabeçalho nativo (voltar + Editar) */}
+          <Stack.Screen
+            name="tarefa/[id]"
+            options={{
+              headerShown: true,
+              title: 'Tarefa',
+              headerStyle: { backgroundColor: colors.surface },
+              headerTintColor: colors.primary,
+              headerTitleStyle: { color: colors.text },
+              headerShadowVisible: false,
+            }}
+          />
           {/* Formulário de tarefa: abre por cima das abas, como modal */}
           <Stack.Screen name="tarefa/formulario" options={{ presentation: 'modal' }} />
         </Stack>

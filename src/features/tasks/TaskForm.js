@@ -4,30 +4,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText } from '../../components/AppText';
 import { Button } from '../../components/Button';
+import { HeaderButton } from '../../components/HeaderButton';
 import { TextField } from '../../components/TextField';
 import { colors, minTouchTarget, pressedFeedback, spacing } from '../../theme';
 import { NOTES_MAX_LENGTH, TITLE_MAX_LENGTH, hasErrors, validateTaskFields } from './validation';
 
 const EMPTY_VALUES = { title: '', notes: '', forToday: false };
-
-/** Botão de texto do cabeçalho do formulário ("Cancelar" e "Salvar"). */
-function HeaderButton({ label, onPress, emphasis = false, accessibilityHint }) {
-  return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      accessibilityHint={accessibilityHint}
-      hitSlop={8}
-      style={({ pressed }) => [styles.headerButton, pressed ? pressedFeedback : null]}>
-      <AppText
-        variant={emphasis ? 'button' : 'body'}
-        color={emphasis ? colors.primary : colors.textSecondary}>
-        {label}
-      </AppText>
-    </Pressable>
-  );
-}
 
 /**
  * Formulário de tarefa, reutilizável para criar e editar.
@@ -163,12 +145,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     flexShrink: 1,
     textAlign: 'center',
-  },
-  headerButton: {
-    minHeight: minTouchTarget,
-    minWidth: minTouchTarget,
-    justifyContent: 'center',
-    paddingHorizontal: spacing.sm,
   },
   content: {
     padding: spacing.lg,

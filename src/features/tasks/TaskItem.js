@@ -8,7 +8,7 @@ import { countSteps, getFirstPendingStep } from './selectors';
 /**
  * Linha de tarefa com duas áreas de toque:
  * - a caixa de seleção, à esquerda, conclui ou reabre a tarefa;
- * - o restante da linha abre a edição.
+ * - o restante da linha abre os detalhes da tarefa (passos).
  * - isHighlighted: true quando o próximo passo desta tarefa já aparece no card
  *   "Seu próximo passo". Nesse caso a linha não repete o passo, só aponta para o card.
  */
@@ -49,7 +49,7 @@ export function TaskItem({ task, onToggle, onOpen, showDivider = false, isHighli
         onPress={() => onOpen(task.id)}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
-        accessibilityHint="Abre a edição da tarefa"
+        accessibilityHint="Abre os detalhes da tarefa"
         style={({ pressed }) => [styles.texts, pressed ? pressedFeedback : null]}>
         <AppText variant="bodyStrong" color={isDone ? colors.textSecondary : colors.text}>
           {task.title}
